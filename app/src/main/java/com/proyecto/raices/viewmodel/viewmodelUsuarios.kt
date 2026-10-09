@@ -37,4 +37,13 @@ class viewmodelUsuarios: ViewModel() {
     return UsuarioRepository.usuarios.find { it.correo== correo }
     }
 
+    fun login(correo:String, contraseña:String): Boolean{
+        val usuario=UsuarioRepository.usuarios.find { it.correo== correo}
+        if(usuario?.contraseña ==contraseña){
+            return true
+        }else{
+            return false
+        }
+    }
+
 }
