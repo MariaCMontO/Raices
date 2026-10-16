@@ -10,35 +10,35 @@ import com.proyecto.raices.data.repository.UsuarioRepository
 class viewmodelUsuarios: ViewModel() {
 
     var listaUsuarios by mutableStateOf(
-        UsuarioRepository.usuarios.toList()
+        UsuarioRepository.listaUsuarios.toList()
     )
         private set
 
     fun agregarUsuario(usuario: Usuario) {
-        UsuarioRepository.usuarios.add(usuario)
-        listaUsuarios= UsuarioRepository.usuarios.toList()
+        UsuarioRepository.listaUsuarios.add(usuario)
+        listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
 
     fun eliminarUsuario(usuario: Usuario) {
-        UsuarioRepository.usuarios.removeAll{
+        UsuarioRepository.listaUsuarios.removeAll{
             it.correo==usuario.correo
         }
-        listaUsuarios= UsuarioRepository.usuarios.toList()
+        listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
 
     fun actualizarPersona(usuarioActualizado: Usuario){
-        UsuarioRepository.usuarios = UsuarioRepository.usuarios.map{
+        UsuarioRepository.listaUsuarios = UsuarioRepository.listaUsuarios.map{
             if(it.correo== usuarioActualizado.correo) usuarioActualizado else it
         }.toMutableList() as ArrayList<Usuario>
-        listaUsuarios= UsuarioRepository.usuarios.toList()
+        listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
 
     fun buscarPorCorreo(correo:String): Usuario?{
-    return UsuarioRepository.usuarios.find { it.correo== correo }
+    return UsuarioRepository.listaUsuarios.find { it.correo== correo }
     }
 
     fun login(correo:String, contraseña:String): Boolean{
-        val usuario=UsuarioRepository.usuarios.find { it.correo== correo}
+        val usuario=UsuarioRepository.listaUsuarios.find { it.correo== correo}
         if(usuario?.contraseña ==contraseña){
             return true
         }else{

@@ -6,7 +6,7 @@ data class Usuario(
     val correo:String,
     val contraseña:String,
     val direccion:String,
-    val intereses: List<String>?,
+    val intereses: MutableList<String>?,
     val oficio:String?,
     val tipoUsuario:String
 )
