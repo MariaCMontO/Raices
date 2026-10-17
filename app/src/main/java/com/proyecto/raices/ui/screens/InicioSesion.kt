@@ -3,6 +3,7 @@ package com.proyecto.raices.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -36,7 +37,7 @@ fun InicioSesion(
     var contraseña by remember { mutableStateOf("") }
 
     var tipoUsuario by remember {
-        mutableStateOf("ANFITRION")
+        mutableStateOf("")
     }
 
     var mensaje by remember {
@@ -87,7 +88,11 @@ fun InicioSesion(
                         onClick = {
                             tipoUsuario = "ANFITRION"
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (tipoUsuario == "ANFITRION") Color(0xFF823B18) else Color.Transparent,
+                            contentColor = if (tipoUsuario == "ANFITRION") Color.White else Color.Black
+                        )
                     ) {
                         Text("Anfitrión")
                     }
@@ -96,7 +101,11 @@ fun InicioSesion(
                         onClick = {
                             tipoUsuario = "EXPLORADOR"
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (tipoUsuario == "EXPLORADOR") Color(0xFF823B18) else Color.Transparent,
+                            contentColor = if (tipoUsuario == "EXPLORADOR") Color.White else Color.Black
+                        )
                     ) {
                         Text("Explorador")
                     }
@@ -137,6 +146,9 @@ fun InicioSesion(
                     value = contraseña,
                     onValueChange = {
                         contraseña = it
+                    },
+                    label={
+                        Text("Ingresa Tu Contrsaseña")
                     },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -195,7 +207,17 @@ fun InicioSesion(
                     Text(
                         text = "Regístrate aquí",
                         color = Color(0xFF823B18),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable{
+                            if(tipoUsuario=="ANFITRION"){
+                                navController.navigate("registroanfitrion")
+                            }else if(tipoUsuario=="EXPLORADOR"){
+                                navController.navigate("registroexplorador")
+                            }else{
+                                mensaje="Seleccione un tipo de usuario"
+                            }
+                        }
+
                     )
 
                 }
