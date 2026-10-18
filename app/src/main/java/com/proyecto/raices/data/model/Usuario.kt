@@ -8,6 +8,9 @@ data class Usuario(
     val direccion:String,
     val intereses: MutableList<String>?,
     val oficio:String?,
-    val tipoUsuario:String
+    val tipoUsuario:String,
+    val sobreMi: String,
+    val lenguas:MutableList<String>,
+    val genero:String
 )
 
