@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.proyecto.raices.ui.screens.InicioSesion
+import com.proyecto.raices.ui.screens.PerfilAnfitrion
+import com.proyecto.raices.ui.screens.PerfilExplorador
 import com.proyecto.raices.ui.screens.RegistroAnfitrion
 import com.proyecto.raices.ui.screens.RegistroExplorador
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
@@ -27,6 +29,12 @@ fun AppNavigation(){
         }
         composable("iniciosesion"){
             InicioSesion(navController, viewmodel)
+        }
+        composable("perfilanfitrion") {
+            PerfilAnfitrion(navController, viewmodel)
+        }
+        composable("perfilexplorador") {
+            PerfilExplorador(navController, viewmodel)
         }
 
     }

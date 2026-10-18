@@ -166,7 +166,8 @@ fun InicioSesion(
                         containerColor = Color(0xFF823B18)
                     ),
                     onClick = {
-
+                        // Edicion Mateo:
+                        /*
                         val acceso =
                             viewmodel.login(
                                 correo,
@@ -178,6 +179,18 @@ fun InicioSesion(
                                 "Inicio de sesión exitoso"
                             else
                                 "Correo o contraseña incorrectos"
+                         */
+                        if (tipoUsuario.isBlank()) {
+                            mensaje = "Seleccione un tipo de usuario"
+                        } else if (viewmodel.login(correo, contraseña, tipoUsuario)) {
+                            val destino = if (tipoUsuario == "ANFITRION") "perfilanfitrion" else "perfilexplorador"
+                            navController.navigate(destino) {
+                                popUpTo("iniciosesion") { inclusive = true }
+                            }
+                        } else {
+                            mensaje = "Correo,contraseña o tipo de usuario incorrectos"
+                        }
+                        //----------
                     }
                 ) {
                     Text("Iniciar sesión")

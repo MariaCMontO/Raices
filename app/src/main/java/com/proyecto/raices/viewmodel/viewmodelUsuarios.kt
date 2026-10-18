@@ -14,6 +14,13 @@ class viewmodelUsuarios: ViewModel() {
     )
         private set
 
+    // Edicion Mateo:
+    var usuarioActivo by mutableStateOf<Usuario?>(
+        null
+    )
+        private set
+    //---------
+
     fun agregarUsuario(usuario: Usuario) {
         UsuarioRepository.listaUsuarios.add(usuario)
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
@@ -26,18 +33,34 @@ class viewmodelUsuarios: ViewModel() {
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
 
+    // Edicion Mateo:
+    /*
     fun actualizarPersona(usuarioActualizado: Usuario){
         UsuarioRepository.listaUsuarios = UsuarioRepository.listaUsuarios.map{
             if(it.correo== usuarioActualizado.correo) usuarioActualizado else it
         }.toMutableList() as ArrayList<Usuario>
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
+     */
+    fun actualizarPersona(usuarioActualizado: Usuario) {
+        UsuarioRepository.listaUsuarios = UsuarioRepository.listaUsuarios
+            .map { if (it.correo == usuarioActualizado.correo) usuarioActualizado else it }
+            .toMutableList()
+        listaUsuarios = UsuarioRepository.listaUsuarios.toList()
+
+        if (usuarioActivo?.correo == usuarioActualizado.correo) {
+            usuarioActivo = usuarioActualizado
+        }
+    }
+    // ----------------
 
     fun buscarPorCorreo(correo:String): Usuario?{
     return UsuarioRepository.listaUsuarios.find { it.correo== correo }
     }
 
-    fun login(correo:String, contraseña:String): Boolean{
+    // Edicion Mateo:
+
+    /*fun login(correo:String, contraseña:String): Boolean{
         val usuario=UsuarioRepository.listaUsuarios.find { it.correo== correo}
         if(usuario?.contraseña ==contraseña){
             return true
@@ -45,5 +68,20 @@ class viewmodelUsuarios: ViewModel() {
             return false
         }
     }
+     */
+    fun login(correo:String, contraseña:String, tipoUsuario: String): Boolean{
+        val usuario=UsuarioRepository.listaUsuarios.find { it.correo== correo}
+        if(usuario?.contraseña ==contraseña && usuario.tipoUsuario == tipoUsuario){
+            usuarioActivo = usuario
+            return true
+        }else{
+            usuarioActivo = null
+            return false
+        }
+    }
 
+    fun cerrarSesion () {
+        usuarioActivo = null
+    }
+    //-----------
 }
