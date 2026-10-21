@@ -39,7 +39,8 @@ fun BarrasSuperiorInferior(
         PantallaDestino.MisViajes,
         PantallaDestino.MisServicios,
         PantallaDestino.AñadirServicio,
-        PantallaDestino.Perfil
+        PantallaDestino.PerfilExplorador,
+        PantallaDestino.PerfilAnfitrion
     )
     val destinoActual = botones.find { it.ruta == rutaActual }
 

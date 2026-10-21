@@ -204,7 +204,7 @@ fun InicioSesion(
                         if (tipoUsuario.isBlank()) {
                             mensaje = "Seleccione un tipo de usuario"
                         } else if (viewmodel.login(correo, contraseña, tipoUsuario)) {
-                            val destino = if (tipoUsuario == "ANFITRION") "perfilanfitrion" else "perfilexplorador"
+                            val destino = if (tipoUsuario == "ANFITRION") "mis-servicios/${tipoUsuario}" else "explorar/${tipoUsuario}"
                             navController.navigate(destino) {
                                 popUpTo("iniciosesion") { inclusive = true }
                             }

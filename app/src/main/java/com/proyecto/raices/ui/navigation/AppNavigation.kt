@@ -50,11 +50,13 @@ fun AppNavigation(){
         composable("iniciosesion"){
             InicioSesion(navController, viewmodel)
         }
-        composable("perfilanfitrion") {
-            PerfilAnfitrion(navController, viewmodel)
+        composable("perfilanfitrion/{tipoUsuario}") { backStackEntry ->
+            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
+            PerfilAnfitrion(navController, viewmodel, tipoUsuario)
         }
-        composable("perfilexplorador") {
-            PerfilExplorador(navController, viewmodel)
+        composable("perfilexplorador/{tipoUsuario}") { backStackEntry ->
+            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
+            PerfilExplorador(navController, viewmodel, tipoUsuario)
         }
         composable("explorar/{tipoUsuario}"){ backStackEntry ->
             val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
