@@ -5,11 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "servicios")
 data class ServicioEntity (
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
     val nombre: String,
     val descripcion: String,
-    val categoria: String,
-    val anfitrion: String,
+    val categoria: CategoriaServicio,
+    val nombreAnfitrion: String,
+    val correoAnfitrion: String,
     val precio: Double
 )
