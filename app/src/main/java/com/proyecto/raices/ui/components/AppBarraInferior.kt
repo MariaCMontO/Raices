@@ -54,9 +54,16 @@ sealed class PantallaDestino(
             icono = Icons.Outlined.Map
         )
 
-    object Perfil :
+    object PerfilExplorador :
         PantallaDestino(
-            ruta = "perfil",
+            ruta = "perfilexplorador/{tipoUsuario}",
+            titulo = "Perfil",
+            icono = Icons.Outlined.Person
+        )
+
+    object PerfilAnfitrion :
+        PantallaDestino(
+            ruta = "perfilanfitrion/{tipoUsuario}",
             titulo = "Perfil",
             icono = Icons.Outlined.Person
         )
@@ -72,13 +79,13 @@ fun AppBarraInferior(
         listOf(
             PantallaDestino.Explorar,
             PantallaDestino.MisViajes,
-            PantallaDestino.Perfil
+            PantallaDestino.PerfilExplorador
         )
     } else {
         listOf(
             PantallaDestino.MisServicios,
             PantallaDestino.AñadirServicio,
-            PantallaDestino.Perfil
+            PantallaDestino.PerfilAnfitrion
         )
     }
 

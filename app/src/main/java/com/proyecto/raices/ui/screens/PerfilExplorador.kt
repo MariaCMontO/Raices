@@ -49,12 +49,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.Usuario
+import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.ui.components.chips
 import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 // ---------- Paleta de colores ----------
-private val FondoPantalla = Color(0xFFFFF8EF)
+private val FondoPantalla = Color(0xFFf3f3f0)
 private val FondoCard = Color(0xFFF3EBDD)
 private val FondoLista = Color(0xFFF8F1E4)
 private val Marron = Color(0xFF823B18)
@@ -66,7 +67,11 @@ private val TextoSecundario = Color(0xFF5A4E45)
 private val ChipFondo = Color(0xFFE6DCCB)
 
 @Composable
-fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios) {
+fun PerfilExplorador(
+    navController: NavController,
+    viewmodel: viewmodelUsuarios,
+    tipoUsuario: String
+) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
@@ -74,7 +79,7 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
     val usuario = viewmodel.usuarioActivo ?: return
 
     // Datos del usuario
-    val nombre = usuario.nombre
+    val nombre = "ExploradorRoberto"
     val ubicacion = usuario.direccion
     val nivel = "Nivel 1"
     val sobreMi = usuario.sobreMi.ifBlank { "Aún no has escrito sobre ti" }
@@ -88,9 +93,10 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
     val tituloEncuentro = "Titulo de encuentro"
     val lugarEncuentro = "Lugar de encuentro"
 
-    Scaffold(
-        containerColor = FondoPantalla,
-        bottomBar = { BarraInferiorExplorador() }
+    BarrasSuperiorInferior(
+        navController = navController,
+        tipoUsuario = tipoUsuario
+
     ) { paddingValues ->
 
         Column(
@@ -101,26 +107,26 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
         ) {
 
             // ---------- Encabezado ----------
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Perfil",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextoOscuro
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.logoraices),
-                    contentDescription = "Logo raíces",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-            HorizontalDivider(color = Color(0xFFEADFCB))
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 20.dp, vertical = 12.dp),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Text(
+//                    text = "Perfil",
+//                    fontSize = 20.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = TextoOscuro
+//                )
+//                Image(
+//                    painter = painterResource(id = R.drawable.logoraices),
+//                    contentDescription = "Logo raíces",
+//                    modifier = Modifier.size(32.dp)
+//                )
+//            }
+//            HorizontalDivider(color = Color(0xFFEADFCB))
 
             Column(
                 modifier = Modifier
@@ -666,38 +672,38 @@ private fun OpcionPerfil(icono: ImageVector, texto: String, onClick: () -> Unit)
     }
 }
 
-@Composable
-private fun BarraInferiorExplorador() {
-    NavigationBar(containerColor = FondoPantalla) {
-
-        val itemColors = NavigationBarItemDefaults.colors(
-            selectedIconColor = TextoOscuro,
-            selectedTextColor = TextoOscuro,
-            indicatorColor = VerdeIndicador,
-            unselectedIconColor = TextoOscuro,
-            unselectedTextColor = TextoOscuro
-        )
-
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: navController.navigate("explorar") */ },
-            icon = { Icon(Icons.Outlined.Explore, contentDescription = "Explorar") },
-            label = { Text("Explorar", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: navController.navigate("misviajes") */ },
-            icon = { Icon(Icons.Outlined.Map, contentDescription = "Mis Viajes") },
-            label = { Text("Mis Viajes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
-        NavigationBarItem(
-            selected = true, // pantalla actual
-            onClick = { },
-            icon = { Icon(Icons.Outlined.Person, contentDescription = "Perfil") },
-            label = { Text("Perfil", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
-    }
-}
+//@Composable
+//private fun BarraInferiorExplorador() {
+//    NavigationBar(containerColor = FondoPantalla) {
+//
+//        val itemColors = NavigationBarItemDefaults.colors(
+//            selectedIconColor = TextoOscuro,
+//            selectedTextColor = TextoOscuro,
+//            indicatorColor = VerdeIndicador,
+//            unselectedIconColor = TextoOscuro,
+//            unselectedTextColor = TextoOscuro
+//        )
+//
+//        NavigationBarItem(
+//            selected = false,
+//            onClick = { /* TODO: navController.navigate("explorar") */ },
+//            icon = { Icon(Icons.Outlined.Explore, contentDescription = "Explorar") },
+//            label = { Text("Explorar", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+//            colors = itemColors
+//        )
+//        NavigationBarItem(
+//            selected = false,
+//            onClick = { /* TODO: navController.navigate("misviajes") */ },
+//            icon = { Icon(Icons.Outlined.Map, contentDescription = "Mis Viajes") },
+//            label = { Text("Mis Viajes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+//            colors = itemColors
+//        )
+//        NavigationBarItem(
+//            selected = true, // pantalla actual
+//            onClick = { },
+//            icon = { Icon(Icons.Outlined.Person, contentDescription = "Perfil") },
+//            label = { Text("Perfil", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+//            colors = itemColors
+//        )
+//    }
+//}
