@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.LocationOn
@@ -19,6 +21,10 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,21 +35,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
-import com.proyecto.raices.viewmodel.viewmodelUsuarios
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import com.proyecto.raices.data.model.Usuario
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import com.proyecto.raices.ui.components.chips
+import com.proyecto.raices.ui.components.chipsUnico
+import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 // ---------- Paleta de colores ----------
 private val FondoPantalla = Color(0xFFFFF8EF)
@@ -54,7 +57,6 @@ private val VerdeIndicador = Color(0xFFCDEB9B)
 private val TextoOscuro = Color(0xFF2B2118)
 private val ChipFondo = Color(0xFFE6DCCB)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) {
 
@@ -65,16 +67,17 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
 
     val nombre = usuario.nombre
     val ubicacion = usuario.direccion
-    val titulo = "Anfitrión"
-    val comunidad = "Comunidad anfitrion"
+    val oficio = usuario.oficio?.takeIf { it.isNotBlank() } ?: "Anfitrión"
+    val comunidad = "Comunidad del anfitrion"            // no existe en Usuario todavía
     val viajeros = 0
     val talleres = 0
-    val idiomas = listOf("Español (Materno)")
-    val sobreMi = usuario.oficio?.takeIf { it.isNotBlank() } ?: "Aún no has escrito tu historia"
+    val lenguas = usuario.lenguas
+    val sobreMi = usuario.sobreMi
+    val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
 
     Scaffold(
         containerColor = FondoPantalla,
-        bottomBar = { BarraInferiorAnfitrion(navController) }
+        bottomBar = { BarraInferiorAnfitrion() }
     ) { paddingValues ->
 
         Column(
@@ -126,7 +129,7 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                     // Foto con borde y check de verificado
                     Box(contentAlignment = Alignment.BottomEnd) {
                         Image(
-                            painter = painterResource(id = R.drawable.hombre_user ),
+                            painter = painterResource(id = foto),
                             contentDescription = "Foto de perfil",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -169,19 +172,23 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                             text = ubicacion,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = TextoOscuro
+                            color = TextoOscuro,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                         Text(text = "  •  ", fontSize = 13.sp, color = Marron)
                         Text(
-                            text = titulo,
+                            text = oficio,
                             fontSize = 13.sp,
                             fontStyle = FontStyle.Italic,
-                            color = Marron
+                            color = Marron,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                     }
-
                     Spacer(modifier = Modifier.height(10.dp))
-
                     Text(
                         text = comunidad,
                         fontSize = 13.sp,
@@ -289,8 +296,12 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        idiomas.forEach { idioma ->
+                    // FlowRow para que las lenguas pasen a otra línea si no caben
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        lenguas.forEach { idioma ->
                             Text(
                                 text = idioma,
                                 fontSize = 12.sp,
@@ -324,6 +335,7 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
     if (mostrarDialogo) {
         DialogoEditarAnfitrion(
             usuario = usuario,
@@ -346,6 +358,9 @@ private fun DialogoEditarAnfitrion(
     var telefono by remember { mutableStateOf(usuario.telefono) }
     var contraseña by remember { mutableStateOf(usuario.contraseña) }
     var direccion by remember { mutableStateOf(usuario.direccion) }
+    var sobreMi by remember { mutableStateOf(usuario.sobreMi) }
+    var genero by remember { mutableStateOf(usuario.genero) }
+    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
     var oficio by remember { mutableStateOf(usuario.oficio ?: "") }
     var contraseñaVisible by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
@@ -435,6 +450,37 @@ private fun DialogoEditarAnfitrion(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                Text(text = "Sobre Mi", fontSize = 16.sp)
+                OutlinedTextField(
+                    value = sobreMi,
+                    onValueChange = { sobreMi = it },
+                    label = { Text("Sobre mi", fontSize = 14.sp) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = coloresCampo,
+                    minLines = 3,
+                    maxLines = 6
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = "Genero", fontSize = 16.sp)
+                chipsUnico(
+                    value = genero,
+                    onValueChange = { genero = it },
+                    opciones = listOf("F", "M")
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = "Lenguas", fontSize = 16.sp)
+                chips(
+                    value = lenguas,
+                    onValueChange = { lenguas = it },
+                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(text = "Oficio", fontSize = 16.sp)
                 OutlinedTextField(
                     value = oficio,
@@ -442,8 +488,7 @@ private fun DialogoEditarAnfitrion(
                     label = { Text("Escribe que deseas compartir", fontSize = 14.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = coloresCampo,
-                    minLines = 3,
-                    maxLines = 6
+                    maxLines = 5
                 )
 
                 if (error.isNotEmpty()) {
@@ -457,7 +502,8 @@ private fun DialogoEditarAnfitrion(
                 colors = ButtonDefaults.buttonColors(containerColor = Marron),
                 onClick = {
                     if (nombre.isBlank() || telefono.isBlank() || contraseña.isBlank() ||
-                        direccion.isBlank() || oficio.isBlank()
+                        direccion.isBlank() || oficio.isBlank() || sobreMi.isBlank() ||
+                        genero.isBlank() || lenguas.isEmpty()
                     ) {
                         error = "Debe llenar todos los campos"
                     } else {
@@ -467,7 +513,10 @@ private fun DialogoEditarAnfitrion(
                                 telefono = telefono.trim(),
                                 contraseña = contraseña,
                                 direccion = direccion.trim(),
-                                oficio = oficio.trim()
+                                oficio = oficio.trim(),
+                                sobreMi = sobreMi.trim(),
+                                genero = genero,
+                                lenguas = lenguas.toMutableList()
                             )
                         )
                     }
@@ -499,7 +548,7 @@ private fun Estadistica(valor: String, etiqueta: String) {
 }
 
 @Composable
-private fun BarraInferiorAnfitrion(navController: NavController) {
+private fun BarraInferiorAnfitrion() {
     NavigationBar(containerColor = FondoPantalla) {
 
         val itemColors = NavigationBarItemDefaults.colors(
@@ -512,14 +561,14 @@ private fun BarraInferiorAnfitrion(navController: NavController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = {  },  // ajusta la ruta
+            onClick = { /* TODO: navController.navigate("misservicios") */ },
             icon = { Icon(Icons.Outlined.Explore, contentDescription = "Mis Servicios") },
             label = { Text("Mis Servicios", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
             colors = itemColors
         )
         NavigationBarItem(
             selected = false,
-            onClick = {  }, // ajusta la ruta
+            onClick = { /* TODO: navController.navigate("anadirservicio") */ },
             icon = { Icon(Icons.Outlined.Map, contentDescription = "Añadir Servicio") },
             label = { Text("Añadir Servicio", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
             colors = itemColors

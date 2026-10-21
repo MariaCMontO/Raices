@@ -11,42 +11,47 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Eco
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Interests
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VolunteerActivism
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
-import com.proyecto.raices.viewmodel.viewmodelUsuarios
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import com.proyecto.raices.data.model.Usuario
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import com.proyecto.raices.ui.components.chips
+import com.proyecto.raices.ui.components.chipsUnico
+import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 // ---------- Paleta de colores ----------
 private val FondoPantalla = Color(0xFFFFF8EF)
@@ -58,21 +63,26 @@ private val VerdeOliva = Color(0xFF4F6B2F)
 private val VerdeIndicador = Color(0xFFCDEB9B)
 private val TextoOscuro = Color(0xFF2B2118)
 private val TextoSecundario = Color(0xFF5A4E45)
+private val ChipFondo = Color(0xFFE6DCCB)
 
 @Composable
 fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios) {
 
-
     var mostrarDialogo by remember { mutableStateOf(false) }
+
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
 
-    // Datos del usuario:
+    // Datos del usuario
     val nombre = usuario.nombre
     val ubicacion = usuario.direccion
-    val nivel = "Nivel 0"
-    val descripcion = "Descripcion del explorador"
-    // Datos de la proxima experiencia:
+    val nivel = "Nivel 1"
+    val sobreMi = usuario.sobreMi.ifBlank { "Aún no has escrito sobre ti" }
+    val intereses = usuario.intereses
+    val lenguas = usuario.lenguas
+    val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
+
+    // Datos quemados de la experiencia registrada.
     val dia = "DÍA"
     val numero = "0"
     val tituloEncuentro = "Titulo de encuentro"
@@ -114,7 +124,8 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
+                    .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -123,7 +134,7 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
                 // ---------- Foto con insignia de hoja ----------
                 Box(contentAlignment = Alignment.BottomEnd) {
                     Image(
-                        painter = painterResource(id = R.drawable.hombre_user),
+                        painter = painterResource(id = foto),
                         contentDescription = "Foto de perfil",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -175,7 +186,7 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Text(
-                    text = descripcion,
+                    text = sobreMi,
                     fontSize = 15.sp,
                     lineHeight = 24.sp,
                     textAlign = TextAlign.Center,
@@ -209,7 +220,7 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
                         )
                     }
                     IconButton(
-                        onClick = { /* TODO: compartir perfil */ },
+                        onClick = { /* Codigo */ },
                         modifier = Modifier
                             .size(40.dp)
                             .background(Color(0xFFE6DCCB), CircleShape)
@@ -267,7 +278,6 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
                                 color = Color.White
                             )
                         }
-
                         Spacer(modifier = Modifier.width(14.dp))
 
                         Column {
@@ -297,6 +307,96 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
                     }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Lenguas:
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = FondoCard)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.Translate,
+                                contentDescription = null,
+                                tint = Marron,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Lenguas de enseñanza:",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = TextoOscuro
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // FlowRow para que las lenguas pasen a otra línea si no caben
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            lenguas.forEach { idioma ->
+                                Text(
+                                    text = idioma,
+                                    fontSize = 12.sp,
+                                    color = TextoOscuro,
+                                    modifier = Modifier
+                                        .background(ChipFondo, RoundedCornerShape(50))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Intereses:
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = FondoCard)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.Interests,
+                                contentDescription = null,
+                                tint = Marron,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Intereses personales:",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = TextoOscuro
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // FlowRow para que los intereses pasen a otra línea si no caben
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            intereses!!.forEach { interes ->
+                                Text(
+                                    text = interes,
+                                    fontSize = 12.sp,
+                                    color = TextoOscuro,
+                                    modifier = Modifier
+                                        .background(ChipFondo, RoundedCornerShape(50))
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // ---------- Opciones ----------
@@ -341,6 +441,7 @@ fun PerfilExplorador(navController: NavController, viewmodel: viewmodelUsuarios)
             }
         }
     }
+
     if (mostrarDialogo) {
         DialogoEditarPerfil(
             usuario = usuario,
@@ -363,7 +464,10 @@ private fun DialogoEditarPerfil(
     var telefono by remember { mutableStateOf(usuario.telefono) }
     var contraseña by remember { mutableStateOf(usuario.contraseña) }
     var direccion by remember { mutableStateOf(usuario.direccion) }
-    var intereses by remember { mutableStateOf(usuario.intereses?.toList() ?: emptyList()) }
+    var sobreMi by remember { mutableStateOf(usuario.sobreMi) }
+    var genero by remember { mutableStateOf(usuario.genero) }
+    var intereses by remember { mutableStateOf<List<String>>(usuario.intereses?.toList() ?: emptyList()) }
+    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
     var contraseñaVisible by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
 
@@ -452,10 +556,42 @@ private fun DialogoEditarPerfil(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                Text(text = "Sobre Mi", fontSize = 16.sp)
+                OutlinedTextField(
+                    value = sobreMi,
+                    onValueChange = { sobreMi = it },
+                    label = { Text("Sobre mi", fontSize = 14.sp) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = coloresCampo,
+                    minLines = 3,
+                    maxLines = 6
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = "Genero", fontSize = 16.sp)
+                chipsUnico(
+                    value = genero,
+                    onValueChange = { genero = it },
+                    opciones = listOf("F", "M")
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(text = "Intereses", fontSize = 16.sp)
-                InteresesChips(
-                    intereses = intereses,
-                    onInteresesChange = { intereses = it }
+                chips(
+                    value = intereses,
+                    onValueChange = { intereses = it },
+                    opciones = listOf("Deporte", "Música", "Tecnología", "Arte", "Viajes")
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = "Lenguas", fontSize = 16.sp)
+                chips(
+                    value = lenguas,
+                    onValueChange = { lenguas = it },
+                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
                 )
 
                 if (error.isNotEmpty()) {
@@ -469,7 +605,8 @@ private fun DialogoEditarPerfil(
                 colors = ButtonDefaults.buttonColors(containerColor = Marron),
                 onClick = {
                     if (nombre.isBlank() || telefono.isBlank() || contraseña.isBlank() ||
-                        direccion.isBlank() || intereses.isEmpty()
+                        direccion.isBlank() || intereses.isEmpty() || sobreMi.isBlank() ||
+                        genero.isBlank() || lenguas.isEmpty()
                     ) {
                         error = "Debe llenar todos los campos"
                     } else {
@@ -479,7 +616,10 @@ private fun DialogoEditarPerfil(
                                 telefono = telefono.trim(),
                                 contraseña = contraseña,
                                 direccion = direccion.trim(),
-                                intereses = intereses.toMutableList()
+                                intereses = intereses.toMutableList(),
+                                sobreMi = sobreMi.trim(),
+                                genero = genero,
+                                lenguas = lenguas.toMutableList()
                             )
                         )
                     }
