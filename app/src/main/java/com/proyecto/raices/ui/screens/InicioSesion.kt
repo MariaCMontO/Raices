@@ -2,7 +2,6 @@ package com.proyecto.raices.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
+import com.proyecto.raices.data.model.Usuario
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 @Composable
@@ -147,7 +147,7 @@ fun InicioSesion(
                     onValueChange = {
                         contraseña = it
                     },
-                    label={
+                    label = {
                         Text("Ingresa Tu Contrsaseña")
                     },
                     visualTransformation = PasswordVisualTransformation(),
@@ -174,10 +174,32 @@ fun InicioSesion(
                             )
 
                         mensaje =
-                            if (acceso)
-                                "Inicio de sesión exitoso"
-                            else
+                            if (acceso) {
+                                val usuarioLogeado: Usuario? = viewmodel.buscarPorCorreo(correo)
+
+                                if (usuarioLogeado != null) {
+                                    val tipoUsuario = usuarioLogeado.tipoUsuario
+
+                                    if (tipoUsuario == "ANFITRION") {
+                                        navController.navigate("mis-servicios/$tipoUsuario") {
+                                            popUpTo("login") { inclusive = true }
+                                        }
+                                        "Inicio de sesión exitoso con ANFITRION"
+
+                                    } else if (tipoUsuario == "EXPLORADOR"){
+                                        navController.navigate("explorar/$tipoUsuario") {
+                                            popUpTo("login") { inclusive = true }
+                                        }
+                                        "Inicio de sesión exitoso con EXPLORADOR"
+                                    } else {
+                                        "Inicio de sesión exitoso con ADMIN"
+                                    }
+                                } else {
+                                    "Inicio de sesión exitoso con ADMIN"
+                                }
+                            } else {
                                 "Correo o contraseña incorrectos"
+                            }
                     }
                 ) {
                     Text("Iniciar sesión")
@@ -208,13 +230,13 @@ fun InicioSesion(
                         text = "Regístrate aquí",
                         color = Color(0xFF823B18),
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable{
-                            if(tipoUsuario=="ANFITRION"){
+                        modifier = Modifier.clickable {
+                            if (tipoUsuario == "ANFITRION") {
                                 navController.navigate("registroanfitrion")
-                            }else if(tipoUsuario=="EXPLORADOR"){
+                            } else if (tipoUsuario == "EXPLORADOR") {
                                 navController.navigate("registroexplorador")
-                            }else{
-                                mensaje="Seleccione un tipo de usuario"
+                            } else {
+                                mensaje = "Seleccione un tipo de usuario"
                             }
                         }
 

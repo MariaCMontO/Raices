@@ -5,7 +5,10 @@ import com.proyecto.raices.data.model.Usuario
 object UsuarioRepository {
 
     var listaUsuarios = mutableListOf<Usuario>(
-        Usuario("Administrador", "123","admin@correo.com","Admin123","Calle 5 #14-98", mutableListOf(), "", "ADMIN","",mutableListOf(),"")
+        Usuario("Administrador", "123","admin@correo.com","Admin123","Calle 5 #14-98", mutableListOf(), "", "ADMIN","",mutableListOf(),""),
+        Usuario("Anfitrión", "123","anfi@correo.com","Anfi123","Calle 5 #14-98", mutableListOf(), "", "ANFITRION","",mutableListOf(),""),
+        Usuario("Explorador", "123","explo@correo.com","Explo123","Calle 5 #14-98", mutableListOf(), "", "EXPLORADOR","",mutableListOf(),""),
+
     )
 
 }
