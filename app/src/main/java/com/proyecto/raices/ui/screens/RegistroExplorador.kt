@@ -4,15 +4,12 @@ package com.proyecto.raices.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,11 +20,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Label
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -39,20 +33,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.Usuario
+import com.proyecto.raices.ui.components.chips
+import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
-import org.intellij.lang.annotations.JdkConstants
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,9 +56,12 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
+    var sobreMi by remember { mutableStateOf("") }
     var intereses by remember { mutableStateOf(emptyList<String>()) }
     var contraseñaVisible by remember { mutableStateOf(false) }
     var mensaje by remember { mutableStateOf("") }
+    var lenguas by remember { mutableStateOf(emptyList<String>()) }
+    var genero by remember { mutableStateOf("") }
 
     Column(
         modifier=Modifier
@@ -198,10 +193,38 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             fontSize = 16.sp,
+                            text="Sobre Mi")
+                        OutlinedTextField(
+                            value=sobreMi,
+                            label = {Text(text="Sobre mi", fontSize = 14.sp)},
+                            onValueChange ={ sobreMi = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color(0xFF87736B),
+                                unfocusedContainerColor = Color(0xFFFFFFFF)
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
+                            text="Genero")
+                        chipsUnico(
+                            value = genero,
+                            onValueChange = { genero = it }, listOf("F", "M"))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
                             text="Intereses")
-                        InteresesChips(
-                            intereses = intereses,
-                            onInteresesChange = { intereses = it })
+                        chips(
+                            value = intereses,
+                            onValueChange = { intereses = it }, listOf("Deporte", "Música", "Tecnología", "Arte", "Viajes"))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
+                            text="Lenguas")
+                        chips(
+                            value = lenguas,
+                            onValueChange = { lenguas = it }, listOf("Español", "Ingles", "Frances", "Italiano"))
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             modifier=Modifier.fillMaxWidth(),
@@ -222,7 +245,10 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                                         direccion,
                                         intereses.toMutableList(),
                                         "",
-                                        "EXPLORADOR"
+                                        "EXPLORADOR",
+                                        sobreMi,
+                                        lenguas .toMutableList(),
+                                        genero
                                     )
                                     viewmodel.agregarUsuario(nuevoUsuario)
                                     mensaje = "Registro Exitoso"
@@ -252,29 +278,4 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InteresesChips(intereses:List<String>, onInteresesChange: (List<String>) -> Unit) {
-    val opciones = listOf("Deporte", "Música", "Tecnología", "Arte", "Viajes")
 
-    FlowRow (
-
-    ) {
-        opciones.forEach { opcion ->
-            val selected = intereses.contains(opcion)
-
-            FilterChip(
-                selected = selected,
-                onClick = {
-                    val nuevos = if (selected) intereses - opcion else intereses + opcion
-                    onInteresesChange(nuevos)
-                },
-                label = { Text(opcion) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = Color(0xFFE2E2E2),
-                    containerColor = Color(0xFFFFF8EF),
-                )
-            )
-        }
-    }
-}

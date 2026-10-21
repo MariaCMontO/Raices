@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.Usuario
+import com.proyecto.raices.ui.components.chips
+import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 
@@ -54,9 +56,12 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
+    var sobreMi by remember { mutableStateOf("") }
     var oficio by remember { mutableStateOf("") }
     var contraseñaVisible by remember { mutableStateOf(false) }
     var mensaje by remember { mutableStateOf("") }
+    var lenguas by remember { mutableStateOf(emptyList<String>()) }
+    var genero by remember { mutableStateOf("") }
 
     Column(
         modifier=Modifier
@@ -188,6 +193,35 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             fontSize = 16.sp,
+                            text="Sobre Mi")
+                        OutlinedTextField(
+                            value=sobreMi,
+                            label = {Text(text="Sobre mi", fontSize = 14.sp)},
+                            onValueChange ={ sobreMi = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedBorderColor = Color(0xFF87736B),
+                                unfocusedContainerColor = Color(0xFFFFFFFF)
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
+                            text="Genero")
+                        chipsUnico(
+                            value = genero,
+                            onValueChange = { genero = it }, listOf("F", "M"))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
+                            text="Lenguas")
+                        chips(
+                            value = lenguas,
+                            onValueChange = { lenguas = it }, listOf("Español", "Ingles", "Frances", "Italiano"))
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            fontSize = 16.sp,
                             text="Oficio")
                         OutlinedTextField(
                             value=oficio,
@@ -220,7 +254,10 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
                                         direccion,
                                         mutableListOf(),
                                         oficio,
-                                        "ANFITRION"
+                                        "ANFITRION",
+                                        sobreMi,
+                                        lenguas.toMutableList(),
+                                        genero
                                     )
                                     viewmodel.agregarUsuario(nuevoUsuario)
                                     mensaje = "Registro Exitoso"
