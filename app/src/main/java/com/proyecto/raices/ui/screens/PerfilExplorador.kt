@@ -79,10 +79,10 @@ fun PerfilExplorador(
     val usuario = viewmodel.usuarioActivo ?: return
 
     // Datos del usuario
-    val nombre = "ExploradorRoberto"
+    val nombre = usuario.nombre
     val ubicacion = usuario.direccion
     val nivel = "Nivel 1"
-    val sobreMi = usuario.sobreMi.ifBlank { "Aún no has escrito sobre ti" }
+    val sobreMi = usuario.sobreMi
     val intereses = usuario.intereses
     val lenguas = usuario.lenguas
     val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
@@ -105,29 +105,6 @@ fun PerfilExplorador(
                 .padding(paddingValues)
                 .background(FondoPantalla)
         ) {
-
-            // ---------- Encabezado ----------
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 20.dp, vertical = 12.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Text(
-//                    text = "Perfil",
-//                    fontSize = 20.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = TextoOscuro
-//                )
-//                Image(
-//                    painter = painterResource(id = R.drawable.logoraices),
-//                    contentDescription = "Logo raíces",
-//                    modifier = Modifier.size(32.dp)
-//                )
-//            }
-//            HorizontalDivider(color = Color(0xFFEADFCB))
-
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -202,42 +179,23 @@ fun PerfilExplorador(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // ---------- Botones editar / compartir ----------
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                Button(
+                    onClick = { mostrarDialogo = true },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
                 ) {
-                    Button(
-                        onClick = { mostrarDialogo = true },
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Marron),
-                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Editar perfil",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    IconButton(
-                        onClick = { /* Codigo */ },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color(0xFFE6DCCB), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Share,
-                            contentDescription = "Compartir",
-                            tint = TextoOscuro,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Editar perfil",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -671,39 +629,3 @@ private fun OpcionPerfil(icono: ImageVector, texto: String, onClick: () -> Unit)
         )
     }
 }
-
-//@Composable
-//private fun BarraInferiorExplorador() {
-//    NavigationBar(containerColor = FondoPantalla) {
-//
-//        val itemColors = NavigationBarItemDefaults.colors(
-//            selectedIconColor = TextoOscuro,
-//            selectedTextColor = TextoOscuro,
-//            indicatorColor = VerdeIndicador,
-//            unselectedIconColor = TextoOscuro,
-//            unselectedTextColor = TextoOscuro
-//        )
-//
-//        NavigationBarItem(
-//            selected = false,
-//            onClick = { /* TODO: navController.navigate("explorar") */ },
-//            icon = { Icon(Icons.Outlined.Explore, contentDescription = "Explorar") },
-//            label = { Text("Explorar", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//        NavigationBarItem(
-//            selected = false,
-//            onClick = { /* TODO: navController.navigate("misviajes") */ },
-//            icon = { Icon(Icons.Outlined.Map, contentDescription = "Mis Viajes") },
-//            label = { Text("Mis Viajes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//        NavigationBarItem(
-//            selected = true, // pantalla actual
-//            onClick = { },
-//            icon = { Icon(Icons.Outlined.Person, contentDescription = "Perfil") },
-//            label = { Text("Perfil", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//    }
-//}
