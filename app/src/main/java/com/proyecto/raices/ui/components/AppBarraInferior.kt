@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Map
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 sealed class PantallaDestino(
     val ruta: String,
@@ -28,42 +30,42 @@ sealed class PantallaDestino(
 ) {
     object Explorar :
         PantallaDestino(
-            ruta = "explorar/{tipoUsuario}",
+            ruta = "explorar",
             titulo = "Explorar",
             icono = Icons.Outlined.Explore
         )
 
     object MisViajes :
         PantallaDestino(
-            ruta = "viajes/{tipoUsuario}",
+            ruta = "viajes",
             titulo = "Mis Viajes",
             icono = Icons.Outlined.Map
         )
 
     object MisServicios :
         PantallaDestino(
-            ruta = "mis-servicios/{tipoUsuario}",
+            ruta = "mis-servicios",
             titulo = "Mis Servicios",
             icono = Icons.Outlined.Explore
         )
 
     object AñadirServicio :
         PantallaDestino(
-            ruta = "añadir-servicio/{tipoUsuario}",
+            ruta = "añadir-servicio",
             titulo = "Añadir Servicio",
             icono = Icons.Outlined.Map
         )
 
     object PerfilExplorador :
         PantallaDestino(
-            ruta = "perfilexplorador/{tipoUsuario}",
+            ruta = "perfilexplorador",
             titulo = "Perfil",
             icono = Icons.Outlined.Person
         )
 
     object PerfilAnfitrion :
         PantallaDestino(
-            ruta = "perfilanfitrion/{tipoUsuario}",
+            ruta = "perfilanfitrion",
             titulo = "Perfil",
             icono = Icons.Outlined.Person
         )
@@ -113,9 +115,13 @@ fun AppBarraInferior(
                 ) {
                     Icon(
                         imageVector = pantalla.icono,
-                        contentDescription = pantalla.titulo
+                        contentDescription = pantalla.titulo,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Text(pantalla.titulo)
+                    Text(
+                        text = pantalla.titulo,
+                        fontSize = 14.sp
+                    )
                 }
             }
         }

@@ -70,13 +70,13 @@ private val ChipFondo = Color(0xFFE6DCCB)
 fun PerfilExplorador(
     navController: NavController,
     viewmodel: viewmodelUsuarios,
-    tipoUsuario: String
 ) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     // Datos del usuario
     val nombre = usuario.nombre
@@ -96,7 +96,6 @@ fun PerfilExplorador(
     BarrasSuperiorInferior(
         navController = navController,
         tipoUsuario = tipoUsuario
-
     ) { paddingValues ->
 
         Column(

@@ -12,15 +12,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.viewmodel.ServicioViewModel
+import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaMisViajes(
     navController: NavController,
     servicioVM: ServicioViewModel,
-    tipoUsuario: String
+    usuarioVM: viewmodelUsuarios
 ) {
     val lista by servicioVM.listaServicios.collectAsState(initial = emptyList())
+
+    val usuario = usuarioVM.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     BarrasSuperiorInferior(
         navController = navController,

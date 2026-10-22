@@ -84,9 +84,6 @@ fun BarrasSuperiorInferior(
                 onPantallaSeleccionada = { pantalla ->
                     if (rutaActual != pantalla.ruta) {
                         navController.navigate(pantalla.ruta) {
-//                            popUpTo("explorar-mis-servicios/${tipoUsuario}") {
-//                                saveState = true
-//                            }
                             launchSingleTop = true
                             restoreState = true
                         }

@@ -50,29 +50,23 @@ fun AppNavigation(){
         composable("iniciosesion"){
             InicioSesion(navController, viewmodel)
         }
-        composable("perfilanfitrion/{tipoUsuario}") { backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PerfilAnfitrion(navController, viewmodel, tipoUsuario)
+        composable("perfilanfitrion") {
+            PerfilAnfitrion(navController, viewmodel)
         }
-        composable("perfilexplorador/{tipoUsuario}") { backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PerfilExplorador(navController, viewmodel, tipoUsuario)
+        composable("perfilexplorador") {
+            PerfilExplorador(navController, viewmodel)
         }
-        composable("explorar/{tipoUsuario}"){ backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PantallaExplorar(navController, servicioVM, tipoUsuario)
+        composable("explorar"){
+            PantallaExplorar(navController, servicioVM, viewmodel)
         }
-        composable("viajes/{tipoUsuario}"){ backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PantallaMisViajes(navController, servicioVM, tipoUsuario)
+        composable("viajes"){
+            PantallaMisViajes(navController, servicioVM, viewmodel)
         }
-        composable("mis-servicios/{tipoUsuario}"){ backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PantallaMisServicios(navController, servicioVM, tipoUsuario)
+        composable("mis-servicios"){
+            PantallaMisServicios(navController, servicioVM, viewmodel)
         }
-        composable("añadir-servicio/{tipoUsuario}"){ backStackEntry ->
-            val tipoUsuario = backStackEntry.arguments?.getString("tipoUsuario") ?: ""
-            PantallaAñadirServicio(navController, servicioVM, tipoUsuario)
+        composable("añadir-servicio"){
+            PantallaAñadirServicio(navController, servicioVM, viewmodel)
         }
     }
 }
