@@ -21,6 +21,12 @@ class viewmodelUsuarios: ViewModel() {
         private set
     //---------
 
+    fun onUsuarioActivoChange(usuarioSesion: Usuario?) {
+        if (usuarioSesion != null) {
+            usuarioActivo = usuarioSesion
+        }
+    }
+
     fun agregarUsuario(usuario: Usuario) {
         val usuarioExiste=UsuarioRepository.listaUsuarios.find { it.correo== usuario.correo}
         if (usuarioExiste!=null) {

@@ -62,13 +62,13 @@ private val ChipFondo = Color(0xFFE6DCCB)
 fun PerfilAnfitrion(
     navController: NavController,
     viewmodel: viewmodelUsuarios,
-    tipoUsuario: String
 ) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     val nombre = usuario.nombre
     val ubicacion = usuario.direccion
