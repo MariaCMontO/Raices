@@ -46,4 +46,9 @@ interface UsuariosDao {
     """)
     suspend fun existeCorreo(correo: String): Boolean
 
+    @Query("SELECT COUNT(*) FROM usuarios")
+    suspend fun obtenerCantidadUsuarios(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertarLista(usuarios: List<Usuario>)
 }

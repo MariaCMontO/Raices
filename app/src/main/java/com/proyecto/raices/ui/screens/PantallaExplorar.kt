@@ -32,16 +32,19 @@ import com.proyecto.raices.ui.components.ItemServicio
 import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.ServicioViewModel
+import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaExplorar(
     navController: NavController,
     servicioVM: ServicioViewModel,
-    tipoUsuario: String
+    usuarioVM: viewmodelUsuarios
 ) {
     var query by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
+    val usuario = usuarioVM.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     val listaServicios = servicioVM.listaServiciosFiltrada
     val categoriasStr = servicioVM.categoriasStr

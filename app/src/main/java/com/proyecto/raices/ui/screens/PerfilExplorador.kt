@@ -70,19 +70,21 @@ private val ChipFondo = Color(0xFFE6DCCB)
 fun PerfilExplorador(
     navController: NavController,
     viewmodel: viewmodelUsuarios,
-    tipoUsuario: String
 ) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
+    var mostrarPreferencias by remember { mutableStateOf(false) }
+    var mostrarCuenta by remember { mutableStateOf(false) }
 
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     // Datos del usuario
-    val nombre = "ExploradorRoberto"
+    val nombre = usuario.nombre
     val ubicacion = usuario.direccion
     val nivel = "Nivel 1"
-    val sobreMi = usuario.sobreMi.ifBlank { "Aún no has escrito sobre ti" }
+    val sobreMi = usuario.sobreMi
     val intereses = usuario.intereses
     val lenguas = usuario.lenguas
     val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
@@ -96,7 +98,6 @@ fun PerfilExplorador(
     BarrasSuperiorInferior(
         navController = navController,
         tipoUsuario = tipoUsuario
-
     ) { paddingValues ->
 
         Column(
@@ -105,29 +106,6 @@ fun PerfilExplorador(
                 .padding(paddingValues)
                 .background(FondoPantalla)
         ) {
-
-            // ---------- Encabezado ----------
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 20.dp, vertical = 12.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Text(
-//                    text = "Perfil",
-//                    fontSize = 20.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = TextoOscuro
-//                )
-//                Image(
-//                    painter = painterResource(id = R.drawable.logoraices),
-//                    contentDescription = "Logo raíces",
-//                    modifier = Modifier.size(32.dp)
-//                )
-//            }
-//            HorizontalDivider(color = Color(0xFFEADFCB))
-
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -202,42 +180,23 @@ fun PerfilExplorador(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // ---------- Botones editar / compartir ----------
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                Button(
+                    onClick = { mostrarDialogo = true },
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
                 ) {
-                    Button(
-                        onClick = { mostrarDialogo = true },
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Marron),
-                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Editar perfil",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    IconButton(
-                        onClick = { /* Codigo */ },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color(0xFFE6DCCB), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Share,
-                            contentDescription = "Compartir",
-                            tint = TextoOscuro,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Editar perfil",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -413,11 +372,11 @@ fun PerfilExplorador(
                 ) {
                     Column {
                         OpcionPerfil(Icons.Outlined.Tune, "Preferencias de viaje") {
-                            /* TODO: navController.navigate("preferenciasviaje") */
+                            mostrarPreferencias = true
                         }
                         HorizontalDivider(color = Color(0xFFEFE5D2))
                         OpcionPerfil(Icons.Outlined.Shield, "Cuenta y privacidad") {
-                            /* TODO: navController.navigate("cuentaprivacidad") */
+                            mostrarCuenta = true
                         }
                         HorizontalDivider(color = Color(0xFFEFE5D2))
                         OpcionPerfil(Icons.Outlined.VolunteerActivism, "Postular comunidad o taller") {
@@ -458,6 +417,31 @@ fun PerfilExplorador(
             }
         )
     }
+    if (mostrarPreferencias) {
+        DialogoPreferencias(
+            usuario = usuario,
+            onCancelar = { mostrarPreferencias = false },
+            onGuardar = { actualizado ->
+                viewmodel.actualizarPersona(actualizado)
+                mostrarPreferencias = false
+            }
+        )
+    }
+
+    if (mostrarCuenta) {
+        DialogoCuenta(
+            usuario = usuario,
+            onCancelar = { mostrarCuenta = false },
+            onCambiarContraseña = { actualizado ->
+                viewmodel.actualizarPersona(actualizado)
+                mostrarCuenta = false
+            },
+            onEliminarCuenta = {
+                navController.navigate("iniciosesion") { popUpTo(0) }
+                viewmodel.eliminarUsuario(usuario)
+            }
+        )
+    }
 }
 
 @Composable
@@ -468,13 +452,9 @@ private fun DialogoEditarPerfil(
 ) {
     var nombre by remember { mutableStateOf(usuario.nombre) }
     var telefono by remember { mutableStateOf(usuario.telefono) }
-    var contraseña by remember { mutableStateOf(usuario.contraseña) }
     var direccion by remember { mutableStateOf(usuario.direccion) }
     var sobreMi by remember { mutableStateOf(usuario.sobreMi) }
     var genero by remember { mutableStateOf(usuario.genero) }
-    var intereses by remember { mutableStateOf<List<String>>(usuario.intereses?.toList() ?: emptyList()) }
-    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
-    var contraseñaVisible by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
 
     val coloresCampo = OutlinedTextFieldDefaults.colors(
@@ -514,28 +494,6 @@ private fun DialogoEditarPerfil(
                     onValueChange = { },
                     enabled = false,
                     modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(text = "Contraseña", fontSize = 16.sp)
-                OutlinedTextField(
-                    value = contraseña,
-                    onValueChange = { contraseña = it },
-                    label = { Text("Crea una contraseña", fontSize = 14.sp) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = coloresCampo,
-                    visualTransformation = if (contraseñaVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                        val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
-                        IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
-                            Icon(imageVector = image, contentDescription = description)
-                        }
-                    }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -584,22 +542,6 @@ private fun DialogoEditarPerfil(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(text = "Intereses", fontSize = 16.sp)
-                chips(
-                    value = intereses,
-                    onValueChange = { intereses = it },
-                    opciones = listOf("Deporte", "Música", "Tecnología", "Arte", "Viajes")
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(text = "Lenguas", fontSize = 16.sp)
-                chips(
-                    value = lenguas,
-                    onValueChange = { lenguas = it },
-                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
-                )
-
                 if (error.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = error, color = Color.Red, fontSize = 13.sp)
@@ -610,9 +552,8 @@ private fun DialogoEditarPerfil(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Marron),
                 onClick = {
-                    if (nombre.isBlank() || telefono.isBlank() || contraseña.isBlank() ||
-                        direccion.isBlank() || intereses.isEmpty() || sobreMi.isBlank() ||
-                        genero.isBlank() || lenguas.isEmpty()
+                    if (nombre.isBlank() || telefono.isBlank() || direccion.isBlank()  || sobreMi.isBlank() ||
+                        genero.isBlank()
                     ) {
                         error = "Debe llenar todos los campos"
                     } else {
@@ -620,12 +561,9 @@ private fun DialogoEditarPerfil(
                             usuario.copy(
                                 nombre = nombre.trim(),
                                 telefono = telefono.trim(),
-                                contraseña = contraseña,
                                 direccion = direccion.trim(),
-                                intereses = intereses.toMutableList(),
                                 sobreMi = sobreMi.trim(),
                                 genero = genero,
-                                lenguas = lenguas.toMutableList()
                             )
                         )
                     }
@@ -672,38 +610,204 @@ private fun OpcionPerfil(icono: ImageVector, texto: String, onClick: () -> Unit)
     }
 }
 
-//@Composable
-//private fun BarraInferiorExplorador() {
-//    NavigationBar(containerColor = FondoPantalla) {
-//
-//        val itemColors = NavigationBarItemDefaults.colors(
-//            selectedIconColor = TextoOscuro,
-//            selectedTextColor = TextoOscuro,
-//            indicatorColor = VerdeIndicador,
-//            unselectedIconColor = TextoOscuro,
-//            unselectedTextColor = TextoOscuro
-//        )
-//
-//        NavigationBarItem(
-//            selected = false,
-//            onClick = { /* TODO: navController.navigate("explorar") */ },
-//            icon = { Icon(Icons.Outlined.Explore, contentDescription = "Explorar") },
-//            label = { Text("Explorar", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//        NavigationBarItem(
-//            selected = false,
-//            onClick = { /* TODO: navController.navigate("misviajes") */ },
-//            icon = { Icon(Icons.Outlined.Map, contentDescription = "Mis Viajes") },
-//            label = { Text("Mis Viajes", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//        NavigationBarItem(
-//            selected = true, // pantalla actual
-//            onClick = { },
-//            icon = { Icon(Icons.Outlined.Person, contentDescription = "Perfil") },
-//            label = { Text("Perfil", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-//            colors = itemColors
-//        )
-//    }
-//}
+@Composable
+private fun DialogoPreferencias(
+    usuario: Usuario,
+    onCancelar: () -> Unit,
+    onGuardar: (Usuario) -> Unit
+) {
+    var intereses by remember { mutableStateOf<List<String>>(usuario.intereses?.toList() ?: emptyList()) }
+    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
+    var error by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onCancelar,
+        containerColor = FondoPantalla,
+        title = {
+            Text(
+                text = "Preferencias de viaje",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                color = TextoOscuro
+            )
+        },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(text = "Intereses", fontSize = 16.sp)
+                chips(
+                    value = intereses,
+                    onValueChange = { intereses = it },
+                    opciones = listOf("Deporte", "Música", "Tecnología", "Arte", "Viajes")
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(text = "Lenguas", fontSize = 16.sp)
+                chips(
+                    value = lenguas,
+                    onValueChange = { lenguas = it },
+                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
+                )
+
+                if (error.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = error, color = Color.Red, fontSize = 13.sp)
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                onClick = {
+                    if (intereses.isEmpty() || lenguas.isEmpty()) {
+                        error = "Selecciona al menos un interés y una lengua"
+                    } else {
+                        onGuardar(
+                            usuario.copy(
+                                intereses = intereses.toMutableList(),
+                                lenguas = lenguas.toMutableList()
+                            )
+                        )
+                    }
+                }
+            ) { Text("Guardar") }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancelar) { Text("Cancelar", color = Marron) }
+        }
+    )
+}
+
+@Composable
+private fun CampoContraseña(
+    value: String,
+    onValueChange: (String) -> Unit,
+    etiqueta: String,
+    visible: Boolean
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(etiqueta, fontSize = 14.sp) },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = Color(0xFF87736B),
+            unfocusedContainerColor = Color.White
+        ),
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation()
+    )
+}
+
+@Composable
+private fun DialogoCuenta(
+    usuario: Usuario,
+    onCancelar: () -> Unit,
+    onCambiarContraseña: (Usuario) -> Unit,
+    onEliminarCuenta: () -> Unit
+) {
+    var actual by remember { mutableStateOf("") }
+    var nueva by remember { mutableStateOf("") }
+    var confirmar by remember { mutableStateOf("") }
+    var visible by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf("") }
+    var confirmarEliminar by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onCancelar,
+        containerColor = FondoPantalla,
+        title = {
+            Text(
+                text = "Cuenta y privacidad",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                color = TextoOscuro
+            )
+        },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+                Text(text = "Correo Electronico", fontSize = 16.sp)
+                OutlinedTextField(
+                    value = usuario.correo,
+                    onValueChange = { },
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Cambiar contraseña", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    IconButton(onClick = { visible = !visible }) {
+                        Icon(
+                            imageVector = if (visible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = if (visible) "Ocultar contraseñas" else "Mostrar contraseñas"
+                        )
+                    }
+                }
+
+                CampoContraseña(actual, { actual = it }, "Contraseña actual", visible)
+                Spacer(modifier = Modifier.height(8.dp))
+                CampoContraseña(nueva, { nueva = it }, "Nueva contraseña", visible)
+                Spacer(modifier = Modifier.height(8.dp))
+                CampoContraseña(confirmar, { confirmar = it }, "Confirmar nueva contraseña", visible)
+
+                if (error.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = error, color = Color.Red, fontSize = 13.sp)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                TextButton(onClick = { confirmarEliminar = true }) {
+                    Text("Eliminar mi cuenta", color = Color.Red, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                onClick = {
+                    when {
+                        actual != usuario.contraseña ->
+                            error = "La contraseña actual no es correcta"
+                        nueva.length < 3 ->
+                            error = "La nueva contraseña debe tener al menos 3 caracteres"
+                        nueva != confirmar ->
+                            error = "Las contraseñas nuevas no coinciden"
+                        else ->
+                            onCambiarContraseña(usuario.copy(contraseña = nueva))
+                    }
+                }
+            ) { Text("Cambiar contraseña") }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancelar) { Text("Cerrar", color = Marron) }
+        }
+    )
+
+    if (confirmarEliminar) {
+        AlertDialog(
+            onDismissRequest = { confirmarEliminar = false },
+            containerColor = FondoPantalla,
+            title = { Text("¿Eliminar tu cuenta?", fontWeight = FontWeight.Bold, color = TextoOscuro) },
+            text = { Text("Esta acción no se puede deshacer. Se borrarán todos tus datos.") },
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    onClick = onEliminarCuenta
+                ) { Text("Sí, eliminar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmarEliminar = false }) {
+                    Text("Cancelar", color = Marron)
+                }
+            }
+        )
+    }
+}

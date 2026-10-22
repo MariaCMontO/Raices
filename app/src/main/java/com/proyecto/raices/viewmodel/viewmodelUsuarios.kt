@@ -8,17 +8,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.raices.data.database.DatabaseProvider
+import com.proyecto.raices.data.model.CategoriaServicio
+import com.proyecto.raices.data.model.ServicioEntity
 import com.proyecto.raices.data.model.Usuario
 import com.proyecto.raices.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 
-class viewmodelUsuarios (application: Application): AndroidViewModel(application) {
+class viewmodelUsuarios(application: Application) : AndroidViewModel(application) {
 
-    private val usuariosDao= DatabaseProvider
+    private val usuariosDao = DatabaseProvider
         .getDatabase(application)
         .usuariosDao()
 
-    var listaUsuarios=usuariosDao.obtenerTodos()
+    var listaUsuarios = usuariosDao.obtenerTodos()
 
     // Edicion Mateo:
     var usuarioActivo by mutableStateOf<Usuario?>(
@@ -27,9 +29,46 @@ class viewmodelUsuarios (application: Application): AndroidViewModel(application
         private set
     //---------
 
+    init {
+        viewModelScope.launch {
+            val cantidad = usuariosDao.obtenerCantidadUsuarios()
+
+            if (cantidad == 0) {
+                val listaUsuarios = mutableListOf<Usuario>(
+                    Usuario(
+                        nombre = "Anfitrión",
+                        telefono = "123",
+                        correo = "anfi@correo.com",
+                        contraseña = "Anfi123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(),
+                        oficio = "",
+                        tipoUsuario = "ANFITRION",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
+                    Usuario(
+                        nombre = "Explorador",
+                        telefono = "123",
+                        correo = "explo@correo.com",
+                        contraseña = "Explo123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(), oficio = "",
+                        tipoUsuario = "EXPLORADOR",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
+                )
+                usuariosDao.insertarLista(listaUsuarios)
+            }
+        }
+    }
+
     fun agregarUsuario(usuario: Usuario) {
         viewModelScope.launch {
-            val usuarioExiste=usuariosDao.existeCorreo(usuario.correo)
+            val usuarioExiste = usuariosDao.existeCorreo(usuario.correo)
             if (usuarioExiste) {
                 return@launch;
             }
@@ -59,7 +98,7 @@ class viewmodelUsuarios (application: Application): AndroidViewModel(application
     }
     // ----------------
 
-    suspend fun buscarPorCorreo(correo:String): Usuario?{
+    suspend fun buscarPorCorreo(correo: String): Usuario? {
         return usuariosDao.obtenerPorCorreo(correo)
     }
 
@@ -90,7 +129,7 @@ class viewmodelUsuarios (application: Application): AndroidViewModel(application
         }
     }
 
-    fun cerrarSesion () {
+    fun cerrarSesion() {
         usuarioActivo = null
     }
     //-----------

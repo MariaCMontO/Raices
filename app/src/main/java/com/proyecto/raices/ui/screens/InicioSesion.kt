@@ -211,26 +211,17 @@ fun InicioSesion(
                         ) { exito ->
 
                             if (exito) {
-
                                 val destino =
-                                    if (tipoUsuario == "ANFITRION")
-                                        "mis-servicios/$tipoUsuario"
-                                    else
-                                        "explorar/$tipoUsuario"
+                                    if (tipoUsuario == "ANFITRION") "mis-servicios" else "explorar"
 
                                 navController.navigate(destino) {
-                                    popUpTo("iniciosesion") {
-                                        inclusive = true
-                                    }
+                                    popUpTo("iniciosesion") { inclusive = true }
                                 }
-
                             } else {
+                                mensaje = "Correo o contraseña incorrectos"
 
-                                mensaje =
-                                    "Correo o contraseña incorrectos"
                             }
                         }
-                        //----------
                     }
                 ) {
                     Text("Iniciar sesión")
