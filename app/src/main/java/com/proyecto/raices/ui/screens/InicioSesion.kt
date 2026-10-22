@@ -205,13 +205,30 @@ fun InicioSesion(
                             } else {
                                 "Correo o contraseña incorrectos"
                          */
-                        if (viewmodel.login(correo, contraseña, tipoUsuario)) {
-                            val destino = if (tipoUsuario == "ANFITRION") "mis-servicios/${tipoUsuario}" else "explorar/${tipoUsuario}"
-                            navController.navigate(destino) {
-                                popUpTo("iniciosesion") { inclusive = true }
+                        viewmodel.login(
+                            correo,
+                            contraseña
+                        ) { exito ->
+
+                            if (exito) {
+
+                                val destino =
+                                    if (tipoUsuario == "ANFITRION")
+                                        "mis-servicios/$tipoUsuario"
+                                    else
+                                        "explorar/$tipoUsuario"
+
+                                navController.navigate(destino) {
+                                    popUpTo("iniciosesion") {
+                                        inclusive = true
+                                    }
+                                }
+
+                            } else {
+
+                                mensaje =
+                                    "Correo o contraseña incorrectos"
                             }
-                        } else {
-                            mensaje = "Correo o contraseña de usuario incorrectos"
                         }
                         //----------
                     }

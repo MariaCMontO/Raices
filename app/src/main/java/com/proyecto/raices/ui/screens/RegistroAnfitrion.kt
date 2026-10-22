@@ -247,17 +247,17 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
                                     mensaje = "Debe llenar todos los campos"
                                 } else {
                                     val nuevoUsuario = Usuario(
-                                        nombre,
-                                        telefono,
-                                        correo,
-                                        contraseña,
-                                        direccion,
-                                        mutableListOf(),
-                                        oficio,
-                                        "ANFITRION",
-                                        sobreMi,
-                                        lenguas.toMutableList(),
-                                        genero
+                                        nombre=nombre,
+                                        telefono=telefono,
+                                        correo=correo,
+                                        contraseña=contraseña,
+                                        direccion=direccion,
+                                        intereses = emptyList(),
+                                        oficio= oficio,
+                                        tipoUsuario="ANFITRION",
+                                        sobreMi=sobreMi,
+                                        lenguas=lenguas,
+                                        genero=genero
                                     )
                                     viewmodel.agregarUsuario(nuevoUsuario)
                                     mensaje = "Registro Exitoso"
