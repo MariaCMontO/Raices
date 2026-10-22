@@ -31,13 +31,23 @@ class viewmodelUsuarios: ViewModel() {
 
     }
 
+    // Edicion Mateo:
+    /*
     fun eliminarUsuario(usuario: Usuario) {
         UsuarioRepository.listaUsuarios.removeAll{
             it.correo==usuario.correo
         }
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
-
+     */
+    fun eliminarUsuario(usuario: Usuario) {
+        UsuarioRepository.listaUsuarios.removeAll { it.correo == usuario.correo }
+        listaUsuarios = UsuarioRepository.listaUsuarios.toList()
+        if (usuarioActivo?.correo == usuario.correo) {
+            usuarioActivo = null
+        }
+    }
+    // ---------------
     // Edicion Mateo:
     /*
     fun actualizarPersona(usuarioActualizado: Usuario){
