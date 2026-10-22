@@ -22,8 +22,13 @@ class viewmodelUsuarios: ViewModel() {
     //---------
 
     fun agregarUsuario(usuario: Usuario) {
+        val usuarioExiste=UsuarioRepository.listaUsuarios.find { it.correo== usuario.correo}
+        if (usuarioExiste==null) {
+            return;
+        }
         UsuarioRepository.listaUsuarios.add(usuario)
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
+
     }
 
     fun eliminarUsuario(usuario: Usuario) {

@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -48,9 +50,11 @@ fun InicioSesion(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFDDD6CD))
-            .padding(25.dp),
+            .padding(25.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
+
     ) {
 
         Card(
@@ -148,7 +152,7 @@ fun InicioSesion(
                         contraseña = it
                     },
                     label = {
-                        Text("Ingresa Tu Contrsaseña")
+                        Text("Ingresa Tu Contraseña")
                     },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -201,15 +205,13 @@ fun InicioSesion(
                             } else {
                                 "Correo o contraseña incorrectos"
                          */
-                        if (tipoUsuario.isBlank()) {
-                            mensaje = "Seleccione un tipo de usuario"
-                        } else if (viewmodel.login(correo, contraseña, tipoUsuario)) {
+                        if (viewmodel.login(correo, contraseña, tipoUsuario)) {
                             val destino = if (tipoUsuario == "ANFITRION") "mis-servicios/${tipoUsuario}" else "explorar/${tipoUsuario}"
                             navController.navigate(destino) {
                                 popUpTo("iniciosesion") { inclusive = true }
                             }
                         } else {
-                            mensaje = "Correo,contraseña o tipo de usuario incorrectos"
+                            mensaje = "Correo o contraseña de usuario incorrectos"
                         }
                         //----------
                     }
