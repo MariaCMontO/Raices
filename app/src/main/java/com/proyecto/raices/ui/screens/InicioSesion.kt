@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,6 +35,7 @@ fun InicioSesion(
     navController: NavController,
     viewmodel: viewmodelUsuarios
 ) {
+    val context = LocalContext.current
 
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
@@ -205,22 +207,41 @@ fun InicioSesion(
                             } else {
                                 "Correo o contraseña incorrectos"
                          */
-                        viewmodel.login(
-                            correo,
-                            contraseña
-                        ) { exito ->
+                        if (tipoUsuario.isNotBlank()) {
+                            viewmodel.login(
+                                correo,
+                                contraseña,
+                                rol = tipoUsuario
+                            ) { exito ->
 
-                            if (exito) {
-                                val destino =
-                                    if (tipoUsuario == "ANFITRION") "mis-servicios" else "explorar"
+                                if (exito) {
+                                    val usuarioLogueado = viewmodel.usuarioActivo
 
-                                navController.navigate(destino) {
-                                    popUpTo("iniciosesion") { inclusive = true }
+                                    val destino = when (usuarioLogueado?.tipoUsuario) {
+                                        "EXPLORADOR" -> "explorar"
+                                        "ANFITRION" -> "mis-servicios"
+                                        "ADMIN" -> "mis-servicios"
+                                        else -> ""
+                                    }
+
+                                    if (tipoUsuario == usuarioLogueado?.tipoUsuario) {
+                                        navController.navigate(destino) {
+                                            popUpTo("iniciosesion") { inclusive = true }
+                                        }
+                                    } else if (usuarioLogueado?.tipoUsuario == "ADMIN" && tipoUsuario == "ANFITRION") {
+                                        navController.navigate(destino) {
+                                            popUpTo("iniciosesion") { inclusive = true }
+                                        }
+                                    } else {
+                                        mensaje = "Tipo de usuario incorrecto"
+                                    }
+
+                                } else {
+                                    mensaje = "Correo o contraseña incorrectos"
                                 }
-                            } else {
-                                mensaje = "Correo o contraseña incorrectos"
-
                             }
+                        } else {
+                            mensaje = "Selecciona el tipo de usuario"
                         }
                     }
                 ) {
