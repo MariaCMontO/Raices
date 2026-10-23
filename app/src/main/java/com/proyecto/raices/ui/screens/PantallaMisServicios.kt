@@ -43,16 +43,17 @@ fun PantallaMisServicios(
     usuarioVM: viewmodelUsuarios
 ) {
 
-    var query by remember { mutableStateOf("") }
-    var categoria by remember { mutableStateOf("") }
+  //  var query by remember { mutableStateOf("") }
+  //  var categoria by remember { mutableStateOf("") }
 
     val usuario = usuarioVM.usuarioActivo ?: return
     val tipoUsuario = usuario.tipoUsuario
+    val correoUsuario = usuario.correo
 
-    val listaServicios = servicioVM.listaServiciosFiltrada
+    val listaServicios = servicioVM.listaServiciosPorCorreoAnfitrion
 
-    LaunchedEffect(query, categoria) {
-        servicioVM.aplicarBusqueda(query, categoria)
+    LaunchedEffect(correoUsuario, tipoUsuario) {
+        servicioVM.obtenerTodosPorCorreoAnfitrion(correoUsuario, tipoUsuario)
     }
 
     BarrasSuperiorInferior(

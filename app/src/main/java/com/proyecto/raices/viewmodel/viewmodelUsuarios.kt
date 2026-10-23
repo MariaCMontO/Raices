@@ -60,6 +60,19 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
                         lenguas = mutableListOf(),
                         genero = ""
                     ),
+                    Usuario(
+                        nombre = "ADMIN",
+                        telefono = "123",
+                        correo = "admin@correo.com",
+                        contraseña = "Admin123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(),
+                        oficio = "",
+                        tipoUsuario = "ADMIN",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
                 )
                 usuariosDao.insertarLista(listaUsuarios)
             }
