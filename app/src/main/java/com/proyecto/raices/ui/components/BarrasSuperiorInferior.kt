@@ -39,7 +39,8 @@ fun BarrasSuperiorInferior(
         PantallaDestino.MisViajes,
         PantallaDestino.MisServicios,
         PantallaDestino.AñadirServicio,
-        PantallaDestino.Perfil
+        PantallaDestino.PerfilExplorador,
+        PantallaDestino.PerfilAnfitrion
     )
     val destinoActual = botones.find { it.ruta == rutaActual }
 
@@ -83,9 +84,6 @@ fun BarrasSuperiorInferior(
                 onPantallaSeleccionada = { pantalla ->
                     if (rutaActual != pantalla.ruta) {
                         navController.navigate(pantalla.ruta) {
-//                            popUpTo("explorar-mis-servicios/${tipoUsuario}") {
-//                                saveState = true
-//                            }
                             launchSingleTop = true
                             restoreState = true
                         }

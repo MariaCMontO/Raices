@@ -44,12 +44,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.Usuario
+import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.ui.components.chips
 import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 // ---------- Paleta de colores ----------
-private val FondoPantalla = Color(0xFFFFF8EF)
+private val FondoPantalla = Color(0xFFf3f3f0)
 private val FondoCard = Color(0xFFF3EBDD)
 private val Marron = Color(0xFF823B18)
 private val VerdeOliva = Color(0xFF4F6B2F)
@@ -58,26 +59,30 @@ private val TextoOscuro = Color(0xFF2B2118)
 private val ChipFondo = Color(0xFFE6DCCB)
 
 @Composable
-fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) {
+fun PerfilAnfitrion(
+    navController: NavController,
+    viewmodel: viewmodelUsuarios,
+) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
 
     val nombre = usuario.nombre
     val ubicacion = usuario.direccion
     val oficio = usuario.oficio?.takeIf { it.isNotBlank() } ?: "Anfitrión"
-    val comunidad = "Comunidad del anfitrion"            // no existe en Usuario todavía
     val viajeros = 0
     val talleres = 0
     val lenguas = usuario.lenguas
     val sobreMi = usuario.sobreMi
     val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
 
-    Scaffold(
-        containerColor = FondoPantalla,
-        bottomBar = { BarraInferiorAnfitrion() }
+    BarrasSuperiorInferior(
+        navController = navController,
+        tipoUsuario = tipoUsuario
+
     ) { paddingValues ->
 
         Column(
@@ -88,30 +93,6 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-
-            // ---------- Encabezado ----------
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Perfil",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextoOscuro
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.logoraices),
-                    contentDescription = "Logo raíces",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             // ---------- Card principal ----------
             Card(
                 modifier = Modifier
@@ -188,13 +169,6 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                             modifier = Modifier.weight(1f, fill = false)
                         )
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = comunidad,
-                        fontSize = 13.sp,
-                        textAlign = TextAlign.Center,
-                        color = Color(0xFF5A4E45)
-                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -214,9 +188,29 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                             Estadistica(valor = talleres.toString(), etiqueta = "Talleres")
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { mostrarDialogo = true },
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Editar perfil",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             // ---------- Card "Sobre mí y mi legado" ----------
@@ -228,36 +222,21 @@ fun PerfilAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios) 
                 colors = CardDefaults.cardColors(containerColor = FondoCard)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Outlined.MenuBook,
-                                contentDescription = null,
-                                tint = Marron
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Sobre mí y mi legado",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.Bold,
-                                color = TextoOscuro
-                            )
-                        }
-                        IconButton(onClick = { mostrarDialogo = true }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Edit,
-                                contentDescription = "Editar",
-                                tint = Marron
-                            )
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.MenuBook,
+                            contentDescription = null,
+                            tint = Marron
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Sobre mí y mi legado",
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily.Serif,
+                            fontWeight = FontWeight.Bold,
+                            color = TextoOscuro
+                        )
                     }
-
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Card(
@@ -544,41 +523,5 @@ private fun Estadistica(valor: String, etiqueta: String) {
             color = VerdeOliva
         )
         Text(text = etiqueta, fontSize = 11.sp, color = Color(0xFF5A4E45))
-    }
-}
-
-@Composable
-private fun BarraInferiorAnfitrion() {
-    NavigationBar(containerColor = FondoPantalla) {
-
-        val itemColors = NavigationBarItemDefaults.colors(
-            selectedIconColor = TextoOscuro,
-            selectedTextColor = TextoOscuro,
-            indicatorColor = VerdeIndicador,
-            unselectedIconColor = TextoOscuro,
-            unselectedTextColor = TextoOscuro
-        )
-
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: navController.navigate("misservicios") */ },
-            icon = { Icon(Icons.Outlined.Explore, contentDescription = "Mis Servicios") },
-            label = { Text("Mis Servicios", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* TODO: navController.navigate("anadirservicio") */ },
-            icon = { Icon(Icons.Outlined.Map, contentDescription = "Añadir Servicio") },
-            label = { Text("Añadir Servicio", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
-        NavigationBarItem(
-            selected = true, // esta pantalla es la de Perfil
-            onClick = { },
-            icon = { Icon(Icons.Outlined.Person, contentDescription = "Perfil") },
-            label = { Text("Perfil", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
-            colors = itemColors
-        )
     }
 }
