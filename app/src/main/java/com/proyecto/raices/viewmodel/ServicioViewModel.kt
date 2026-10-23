@@ -43,51 +43,99 @@ class ServicioViewModel(application: Application) : AndroidViewModel(application
             if (cantidad == 0) {
                 val lista = listOf(
                     ServicioEntity(
-                        nombre = "Servicio1",
+                        nombre = "Artesanias Tipicas",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.ARTESANIAS,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
                         precio = 500.00
                     ),
                     ServicioEntity(
-                        nombre = "Servicio2",
+                        nombre = "Platos Quindianos",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.GASTRONOMIA,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
                         precio = 500.00
                     ),
                     ServicioEntity(
-                        nombre = "Servicio3",
+                        nombre = "Fundación de Salento",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.HISTORIA,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
                         precio = 500.00
                     ),
                     ServicioEntity(
-                        nombre = "Servicio4",
+                        nombre = "Pomadas a base de hierbas",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.MEDICINA,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
                         precio = 500.00
                     ),
                     ServicioEntity(
-                        nombre = "Servicio5",
+                        nombre = "Tratamiento y cuidados del café",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.AGRICULTURA,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
                         precio = 500.00
                     ),
                     ServicioEntity(
-                        nombre = "Servicio6",
+                        nombre = "Caminata a Morrogacho",
                         descripcion = "descripcion",
                         categoria = CategoriaServicio.RECORRIDOS,
-                        nombreAnfitrion = "Bryan",
-                        correoAnfitrion = "correo",
+                        nombreAnfitrion = "ANFI",
+                        correoAnfitrion = "anfi@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Artesanias ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.ARTESANIAS,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Platos Cuyabros ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.GASTRONOMIA,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Historia Indigena ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.HISTORIA,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Pomadas del ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.MEDICINA,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Cultivo de aguacate ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.AGRICULTURA,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
+                        precio = 500.00
+                    ),
+                    ServicioEntity(
+                        nombre = "Caminata ADMIN",
+                        descripcion = "descripcion",
+                        categoria = CategoriaServicio.RECORRIDOS,
+                        nombreAnfitrion = "ADMIN",
+                        correoAnfitrion = "admin@correo.com",
                         precio = 500.00
                     )
                 )
@@ -120,9 +168,13 @@ class ServicioViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun obtenerTodosPorCorreoAnfitrion(correoAnfitrion: String) {
+    fun obtenerTodosPorCorreoAnfitrion(correoAnfitrion: String, rol: String) {
         viewModelScope.launch {
-            listaServiciosPorCorreoAnfitrion = dao.obtenerTodosPorCorreoAnfitrion(correoAnfitrion)
+            if (rol == "ADMIN") {
+                listaServiciosPorCorreoAnfitrion = dao.obtenerTodosAsList()
+            } else {
+                listaServiciosPorCorreoAnfitrion = dao.obtenerTodosPorCorreoAnfitrion(correoAnfitrion)
+            }
         }
     }
 

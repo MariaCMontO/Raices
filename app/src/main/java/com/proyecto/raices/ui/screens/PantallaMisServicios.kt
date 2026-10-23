@@ -42,13 +42,21 @@ fun PantallaMisServicios(
     tipoUsuario: String
 ) {
 
-    var query by remember { mutableStateOf("") }
-    var categoria by remember { mutableStateOf("") }
+//    var query by remember { mutableStateOf("") }
+//    var categoria by remember { mutableStateOf("") }
 
+<<<<<<< Updated upstream
     val listaServicios = servicioVM.listaServiciosFiltrada
+=======
+    val usuario = usuarioVM.usuarioActivo ?: return
+    val tipoUsuario = usuario.tipoUsuario
+    val correoUsuario = usuario.correo
 
-    LaunchedEffect(query, categoria) {
-        servicioVM.aplicarBusqueda(query, categoria)
+    val listaServicios = servicioVM.listaServiciosPorCorreoAnfitrion
+>>>>>>> Stashed changes
+
+    LaunchedEffect(correoUsuario, tipoUsuario) {
+        servicioVM.obtenerTodosPorCorreoAnfitrion(correoUsuario, tipoUsuario)
     }
 
     BarrasSuperiorInferior(

@@ -21,6 +21,59 @@ class viewmodelUsuarios: ViewModel() {
         private set
     //---------
 
+<<<<<<< Updated upstream
+=======
+    init {
+        viewModelScope.launch {
+            val cantidad = usuariosDao.obtenerCantidadUsuarios()
+
+            if (cantidad == 0) {
+                val listaUsuarios = mutableListOf<Usuario>(
+                    Usuario(
+                        nombre = "Anfitrión",
+                        telefono = "123",
+                        correo = "anfi@correo.com",
+                        contraseña = "Anfi123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(),
+                        oficio = "",
+                        tipoUsuario = "ANFITRION",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
+                    Usuario(
+                        nombre = "Explorador",
+                        telefono = "123",
+                        correo = "explo@correo.com",
+                        contraseña = "Explo123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(), oficio = "",
+                        tipoUsuario = "EXPLORADOR",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
+                    Usuario(
+                        nombre = "ADMIN",
+                        telefono = "123",
+                        correo = "admin@correo.com",
+                        contraseña = "Admin123",
+                        direccion = "Calle 5 #14-98",
+                        intereses = emptyList(),
+                        oficio = "",
+                        tipoUsuario = "ADMIN",
+                        sobreMi = "",
+                        lenguas = mutableListOf(),
+                        genero = ""
+                    ),
+                )
+                usuariosDao.insertarLista(listaUsuarios)
+            }
+        }
+    }
+
+>>>>>>> Stashed changes
     fun agregarUsuario(usuario: Usuario) {
         UsuarioRepository.listaUsuarios.add(usuario)
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()

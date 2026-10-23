@@ -3,6 +3,7 @@ package com.proyecto.raices.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -86,7 +87,7 @@ fun AppBarraInferior(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFFBF3E4))
-            .padding(16.dp),
+            .padding(horizontal = 8.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         botones.forEach { pantalla ->
@@ -99,14 +100,26 @@ fun AppBarraInferior(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (esActivo) Color(0xFFCFE99F) else Color.Transparent,
                     contentColor = if (esActivo) Color(0xFF546A2E) else Color.Black
-                )
+                ),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
                         imageVector = pantalla.icono,
+<<<<<<< Updated upstream
                         contentDescription = pantalla.titulo
+=======
+                        contentDescription = pantalla.titulo,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = pantalla.titulo,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        softWrap = false
+>>>>>>> Stashed changes
                     )
                     Text(pantalla.titulo)
                 }
