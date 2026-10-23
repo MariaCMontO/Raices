@@ -238,17 +238,17 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                                     mensaje = "Debe llenar todos los campos"
                                 } else {
                                     val nuevoUsuario = Usuario(
-                                        nombre,
-                                        telefono,
-                                        correo,
-                                        contraseña,
-                                        direccion,
-                                        intereses.toMutableList(),
-                                        "",
-                                        "EXPLORADOR",
-                                        sobreMi,
-                                        lenguas .toMutableList(),
-                                        genero
+                                        nombre=nombre,
+                                        telefono=telefono,
+                                        correo=correo,
+                                        contraseña=contraseña,
+                                        direccion=direccion,
+                                        intereses=intereses.toList(),
+                                        oficio="",
+                                        tipoUsuario = "EXPLORADOR",
+                                        sobreMi=sobreMi,
+                                        lenguas=lenguas .toMutableList(),
+                                        genero=genero
                                     )
                                     viewmodel.agregarUsuario(nuevoUsuario)
                                     mensaje = "Registro Exitoso"
