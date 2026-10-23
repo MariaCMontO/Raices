@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,6 +35,7 @@ fun InicioSesion(
     navController: NavController,
     viewmodel: viewmodelUsuarios
 ) {
+    val context = LocalContext.current
 
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
@@ -212,7 +214,7 @@ fun InicioSesion(
 
                             if (exito) {
                                 val destino =
-                                    if (tipoUsuario == "ANFITRION") "mis-servicios" else "explorar"
+                                    if (tipoUsuario == "EXPLORADOR") "explorar" else "mis-servicios"
 
                                 navController.navigate(destino) {
                                     popUpTo("iniciosesion") { inclusive = true }

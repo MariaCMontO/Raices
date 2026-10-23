@@ -18,6 +18,7 @@ import com.proyecto.raices.ui.screens.PantallaMisServicios
 import com.proyecto.raices.ui.screens.PantallaMisViajes
 import com.proyecto.raices.ui.screens.RegistroAnfitrion
 import com.proyecto.raices.ui.screens.RegistroExplorador
+import com.proyecto.raices.ui.screens.SplashScreen
 import com.proyecto.raices.viewmodel.ServicioViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
@@ -39,8 +40,11 @@ fun AppNavigation(){
 
     NavHost(
         navController=navController,
-        startDestination = "iniciosesion"
+        startDestination = "splash"
     ){
+        composable("splash"){
+            SplashScreen(navController, viewmodel)
+        }
         composable("registroexplorador"){
             RegistroExplorador(navController, viewmodel)
         }
