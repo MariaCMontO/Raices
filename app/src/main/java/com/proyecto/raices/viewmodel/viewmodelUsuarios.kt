@@ -5,16 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proyecto.raices.data.database.DatabaseProvider
-import com.proyecto.raices.data.model.CategoriaServicio
-import com.proyecto.raices.data.model.ServicioEntity
 import com.proyecto.raices.data.model.Usuario
-import com.proyecto.raices.data.repository.UsuarioRepository
+import com.proyecto.raices.data.sharedPreferences.SharedPreferencesManager
 import kotlinx.coroutines.launch
 
 class viewmodelUsuarios(application: Application) : AndroidViewModel(application) {
+
+    private val sharedPrefManager = SharedPreferencesManager(application)
 
     private val usuariosDao = DatabaseProvider
         .getDatabase(application)
@@ -27,12 +26,16 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
         null
     )
         private set
-    //---------
 
     init {
         viewModelScope.launch {
-            val cantidad = usuariosDao.obtenerCantidadUsuarios()
+            val (correoGuardado, passGuardado) = sharedPrefManager.cargarDatos()
+            if (correoGuardado.isNotEmpty() && passGuardado.isNotEmpty()) {
 
+                usuarioActivo = usuariosDao.login(correoGuardado, passGuardado)
+            }
+
+            val cantidad = usuariosDao.obtenerCantidadUsuarios()
             if (cantidad == 0) {
                 val listaUsuarios = mutableListOf<Usuario>(
                     Usuario(
@@ -107,9 +110,12 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
     fun actualizarPersona(usuarioActualizado: Usuario) {
         viewModelScope.launch {
             usuariosDao.actualizar(usuarioActualizado)
+
+            if (usuarioActivo?.correo == usuarioActualizado.correo) {
+                sharedPrefManager.guardarDatos(usuarioActualizado.correo, usuarioActualizado.contraseña)
+            }
         }
     }
-    // ----------------
 
     suspend fun buscarPorCorreo(correo: String): Usuario? {
         return usuariosDao.obtenerPorCorreo(correo)
@@ -128,22 +134,24 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
      */
     fun login(
         correo: String,
-        contraseña: String,
+        contrasena: String,
         onResult: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
 
-            usuarioActivo = usuariosDao.login(
-                correo,
-                contraseña
-            )
+            usuarioActivo = usuariosDao.login(correo, contrasena)
 
-            onResult(usuarioActivo != null)
+            val exito = usuarioActivo != null
+
+            if (exito) {
+                sharedPrefManager.guardarDatos(correo, contrasena)
+            }
+            onResult(exito)
         }
     }
 
     fun cerrarSesion() {
         usuarioActivo = null
+        sharedPrefManager.limpiarDatos()
     }
-    //-----------
 }
