@@ -49,6 +49,7 @@ fun PantallaMisServicios(
     val usuario = usuarioVM.usuarioActivo ?: return
     val tipoUsuario = usuario.tipoUsuario
     val correoUsuario = usuario.correo
+    val genero = usuario.genero
 
     val listaServicios = servicioVM.listaServiciosPorCorreoAnfitrion
 
@@ -78,7 +79,8 @@ fun PantallaMisServicios(
                         onClick = {
                             //navController.navigate("detalle/${servicio.id}")
                         },
-                        tipoUsuario = tipoUsuario
+                        tipoUsuario = tipoUsuario,
+                        generoUsuario = genero
                     )
                 }
             }

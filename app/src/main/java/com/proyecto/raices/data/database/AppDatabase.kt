@@ -12,7 +12,7 @@ import com.proyecto.raices.data.model.Usuario
     entities = [
         ServicioEntity::class, Usuario::class
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
