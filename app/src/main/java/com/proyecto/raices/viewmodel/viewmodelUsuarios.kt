@@ -92,9 +92,21 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
         }
     }
 
+    /*--------------
     fun eliminarUsuario(usuario: Usuario) {
         viewModelScope.launch {
             usuariosDao.eliminar(usuario)
+        }
+    }--------------
+    */
+    fun eliminarUsuario(usuario: Usuario) {
+        viewModelScope.launch {
+            usuariosDao.eliminar(usuario)
+
+            if (usuarioActivo?.correo == usuario.correo) {
+                usuarioActivo = null
+                sharedPrefManager.limpiarDatos()
+            }
         }
     }
 
@@ -107,11 +119,24 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
         listaUsuarios= UsuarioRepository.listaUsuarios.toList()
     }
      */
+    /*-----------
     fun actualizarPersona(usuarioActualizado: Usuario) {
         viewModelScope.launch {
             usuariosDao.actualizar(usuarioActualizado)
 
             if (usuarioActivo?.correo == usuarioActualizado.correo) {
+                sharedPrefManager.guardarDatos(usuarioActualizado.correo, usuarioActualizado.contraseña)
+            }
+        }
+    }-----------
+    */
+
+    fun actualizarPersona(usuarioActualizado: Usuario) {
+        viewModelScope.launch {
+            usuariosDao.actualizar(usuarioActualizado)
+
+            if (usuarioActivo?.correo == usuarioActualizado.correo) {
+                usuarioActivo = usuarioActualizado
                 sharedPrefManager.guardarDatos(usuarioActualizado.correo, usuarioActualizado.contraseña)
             }
         }
