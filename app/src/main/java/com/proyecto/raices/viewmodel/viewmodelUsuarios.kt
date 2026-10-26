@@ -160,6 +160,7 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
     fun login(
         correo: String,
         contrasena: String,
+        rol: String,
         onResult: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
@@ -168,7 +169,10 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
 
             val exito = usuarioActivo != null
 
-            if (exito) {
+            if (exito && usuarioActivo?.tipoUsuario == rol) {
+                sharedPrefManager.guardarDatos(correo, contrasena)
+
+            } else if (exito && rol == "ANFITRION" && usuarioActivo?.tipoUsuario == "ADMIN") {
                 sharedPrefManager.guardarDatos(correo, contrasena)
             }
             onResult(exito)

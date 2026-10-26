@@ -207,22 +207,41 @@ fun InicioSesion(
                             } else {
                                 "Correo o contraseña incorrectos"
                          */
-                        viewmodel.login(
-                            correo,
-                            contraseña
-                        ) { exito ->
+                        if (tipoUsuario.isNotBlank()) {
+                            viewmodel.login(
+                                correo,
+                                contraseña,
+                                rol = tipoUsuario
+                            ) { exito ->
 
-                            if (exito) {
-                                val destino =
-                                    if (tipoUsuario == "EXPLORADOR") "explorar" else "mis-servicios"
+                                if (exito) {
+                                    val usuarioLogueado = viewmodel.usuarioActivo
 
-                                navController.navigate(destino) {
-                                    popUpTo("iniciosesion") { inclusive = true }
+                                    val destino = when (usuarioLogueado?.tipoUsuario) {
+                                        "EXPLORADOR" -> "explorar"
+                                        "ANFITRION" -> "mis-servicios"
+                                        "ADMIN" -> "mis-servicios"
+                                        else -> ""
+                                    }
+
+                                    if (tipoUsuario == usuarioLogueado?.tipoUsuario) {
+                                        navController.navigate(destino) {
+                                            popUpTo("iniciosesion") { inclusive = true }
+                                        }
+                                    } else if (usuarioLogueado?.tipoUsuario == "ADMIN" && tipoUsuario == "ANFITRION") {
+                                        navController.navigate(destino) {
+                                            popUpTo("iniciosesion") { inclusive = true }
+                                        }
+                                    } else {
+                                        mensaje = "Tipo de usuario incorrecto"
+                                    }
+
+                                } else {
+                                    mensaje = "Correo o contraseña incorrectos"
                                 }
-                            } else {
-                                mensaje = "Correo o contraseña incorrectos"
-
                             }
+                        } else {
+                            mensaje = "Selecciona el tipo de usuario"
                         }
                     }
                 ) {
