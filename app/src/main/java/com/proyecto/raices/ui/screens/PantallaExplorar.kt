@@ -45,6 +45,7 @@ fun PantallaExplorar(
     var categoria by remember { mutableStateOf("") }
     val usuario = usuarioVM.usuarioActivo ?: return
     val tipoUsuario = usuario.tipoUsuario
+    val genero = usuario.genero
 
     val listaServicios = servicioVM.listaServiciosFiltrada
     val categoriasStr = servicioVM.categoriasStr
@@ -126,7 +127,8 @@ fun PantallaExplorar(
                         onClick = {
                             //navController.navigate("detalle/${servicio.id}")
                         },
-                        tipoUsuario = tipoUsuario
+                        tipoUsuario = tipoUsuario,
+                        generoUsuario = genero
                     )
                 }
             }

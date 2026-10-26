@@ -214,8 +214,14 @@ fun InicioSesion(
                                 rol = tipoUsuario
                             ) { exito ->
 
+<<<<<<< HEAD
                                 if (exito) {
                                     val usuarioLogueado = viewmodel.usuarioActivo
+=======
+                            if (exito) {
+                                val destino =
+                                    if (tipoUsuario == "EXPLORADOR") "explorar" else "mis-servicios"
+>>>>>>> 85f47a3343e5cf05ab4e76310c05eb8c986bd6af
 
                                     val destino = when (usuarioLogueado?.tipoUsuario) {
                                         "EXPLORADOR" -> "explorar"

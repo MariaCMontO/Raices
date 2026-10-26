@@ -2,6 +2,7 @@ package com.proyecto.raices.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,9 +26,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecto.raices.R
@@ -37,8 +41,11 @@ import com.proyecto.raices.data.model.ServicioEntity
 fun ItemServicio(
     servicio: ServicioEntity,
     onClick: () -> Unit,
-    tipoUsuario: String
+    tipoUsuario: String,
+    generoUsuario: String
 ) {
+    val fotoAnfi = if (generoUsuario == "F") R.drawable.mujer_user else R.drawable.hombre_user
+
     val categoria = servicio.categoria
     val imagen = when (categoria) {
         CategoriaServicio.HISTORIA -> {
@@ -75,8 +82,8 @@ fun ItemServicio(
     ) {
         Column(
             modifier = Modifier
-                .padding(bottom = 0.dp)
                 .fillMaxWidth()
+                .padding(bottom = 0.dp)
         ) {
             Image(
                 painter = painterResource(id = imagen),
@@ -86,30 +93,38 @@ fun ItemServicio(
                     .height(200.dp),
                 contentScale = ContentScale.Crop
             )
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(start = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "Imagen",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = 13.sp
+                Image(
+                    painter = painterResource(id = fotoAnfi),
+                    contentDescription = "Foto de perfil",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .border(3.dp, Color(0xFFE6DCCB), CircleShape)
                 )
 
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = "Anfitrión: ${servicio.nombreAnfitrion}",
+                    text = servicio.nombreAnfitrion,
                     style = MaterialTheme.typography.titleMedium,
-                    fontSize = 13.sp
+                    fontSize = 20.sp
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 modifier = Modifier
                     .padding(0.dp)
-                    .padding(start = 8.dp),
+                    .padding(start = 16.dp),
                 text = "Nombre: ${servicio.nombre}",
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 16.sp
@@ -117,29 +132,32 @@ fun ItemServicio(
             Text(
                 modifier = Modifier
                     .padding(0.dp)
-                    .padding(start = 8.dp),
+                    .padding(start = 16.dp),
                 text = "Categoría: ${servicio.categoria.tipo}",
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 13.sp
+                fontSize = 16.sp
             )
             Text(
                 modifier = Modifier
-                    .padding(0.dp)
-                    .padding(start = 8.dp),
-                text = "Descripción: ${servicio.descripcion}",
+                    .padding(
+                        start = 16.dp,
+                        end = 40.dp,
+                        bottom = 8.dp
+                    ),
+                text = "Descripción: ${servicio.descripcion} ",
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 13.sp
+                fontSize = 16.sp,
             )
 
             Row(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier.padding(8.dp),
+                    modifier = Modifier.padding(16.dp),
                     text = "$${servicio.precio} COP / pers.",
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 20.sp
@@ -152,7 +170,7 @@ fun ItemServicio(
                         .width(110.dp)
                         .height(40.dp),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color(0xFFA0522D) ,
+                        containerColor = Color(0xFFA0522D),
                         contentColor = Color.White
                     )
                 ) {
