@@ -25,7 +25,7 @@ class ViajesViewModel(application: Application) : AndroidViewModel(application) 
     fun mensajes(grupoId: Int): Flow<List<MensajeGrupo>> = dao.obtenerMensajes(grupoId)
 
     init {
-        // Datos de ejemplo (borrar cuando ya no los necesites)
+
         viewModelScope.launch {
             if (dao.contarGrupos() == 0) {
                 val ceramica = dao.insertarGrupo(

@@ -33,7 +33,9 @@ import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.ui.components.DialogoCrearGrupo
 import com.proyecto.raices.ui.components.GrupoActivoCard
 import com.proyecto.raices.ui.components.OtroGrupoItem
+import com.proyecto.raices.ui.components.ReservaItem
 import com.proyecto.raices.ui.components.ViajesColores
+import com.proyecto.raices.viewmodel.ReservaViewModel
 import com.proyecto.raices.viewmodel.ViajesViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
@@ -42,6 +44,7 @@ import com.proyecto.raices.viewmodel.viewmodelUsuarios
 fun PantallaMisViajes(
     navController: NavController,
     viajesVM: ViajesViewModel,
+    reservaVM: ReservaViewModel,
     usuarioVM: viewmodelUsuarios
 ) {
     val usuario = usuarioVM.usuarioActivo ?: return
@@ -50,6 +53,9 @@ fun PantallaMisViajes(
     val flujoOtros = remember(usuario.correo) { viajesVM.otrosGrupos(usuario.correo) }
     val misGrupos by flujoMisGrupos.collectAsState(initial = emptyList())
     val otrosGrupos by flujoOtros.collectAsState(initial = emptyList())
+
+    val flujoReservas = remember(usuario.correo) { reservaVM.misReservas(usuario.correo) }
+    val reservas by flujoReservas.collectAsState(initial = emptyList())
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
@@ -114,6 +120,32 @@ fun PantallaMisViajes(
                     OtroGrupoItem(
                         grupo = grupo,
                         onUnirse = { viajesVM.unirse(grupo.id, usuario.correo) }
+                    )
+                }
+            }
+
+            // ---- Mis Reservas (debajo de Otros Grupos) ----
+            item {
+                Text(
+                    text = "Mis Reservas",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            if (reservas.isEmpty()) {
+                item {
+                    Text(
+                        "Aún no tienes reservas. Ve a Explorar y reserva una experiencia.",
+                        color = androidx.compose.ui.graphics.Color.Gray,
+                        fontSize = 14.sp
+                    )
+                }
+            } else {
+                items(reservas, key = { "reserva-${it.id}" }) { reserva ->
+                    ReservaItem(
+                        reserva = reserva,
+                        onCancelar = { reservaVM.cancelar(reserva) }
                     )
                 }
             }

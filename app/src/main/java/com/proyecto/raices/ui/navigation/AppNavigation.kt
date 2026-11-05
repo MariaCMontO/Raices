@@ -6,9 +6,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.proyecto.raices.ui.screens.InicioSesion
 import com.proyecto.raices.ui.screens.PerfilAnfitrion
 import com.proyecto.raices.ui.screens.PerfilExplorador
@@ -16,9 +18,11 @@ import com.proyecto.raices.ui.screens.PantallaAñadirServicio
 import com.proyecto.raices.ui.screens.PantallaExplorar
 import com.proyecto.raices.ui.screens.PantallaMisServicios
 import com.proyecto.raices.ui.screens.PantallaMisViajes
+import com.proyecto.raices.ui.screens.PantallaReserva
 import com.proyecto.raices.ui.screens.RegistroAnfitrion
 import com.proyecto.raices.ui.screens.RegistroExplorador
 import com.proyecto.raices.ui.screens.SplashScreen
+import com.proyecto.raices.viewmodel.ReservaViewModel
 import com.proyecto.raices.viewmodel.ServicioViewModel
 import com.proyecto.raices.viewmodel.ViajesViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
@@ -42,6 +46,16 @@ fun AppNavigation(){
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return ViajesViewModel(
+                    context.applicationContext as Application
+                ) as T
+            }
+        }
+    )
+
+    val reservaVM: ReservaViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ReservaViewModel(
                     context.applicationContext as Application
                 ) as T
             }
@@ -75,7 +89,15 @@ fun AppNavigation(){
             PantallaExplorar(navController, servicioVM, viewmodel)
         }
         composable("viajes"){
-            PantallaMisViajes(navController, viajesVM, viewmodel)
+            PantallaMisViajes(navController, viajesVM, reservaVM, viewmodel)
+        }
+        composable(
+            route = "reservar/{servicioId}",
+            arguments = listOf(navArgument("servicioId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val servicioId = backStackEntry.arguments?.getInt("servicioId")
+                ?: return@composable
+            PantallaReserva(navController, servicioId, servicioVM, reservaVM, viewmodel)
         }
         composable("mis-servicios"){
             PantallaMisServicios(navController, servicioVM, viewmodel)

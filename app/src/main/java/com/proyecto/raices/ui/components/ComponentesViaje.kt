@@ -90,6 +90,23 @@ fun ChipEstado(estado: EstadoGrupo) {
 }
 
 @Composable
+fun ChipEstadoTexto(texto: String) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(ViajesColores.VerdeChip)
+            .padding(horizontal = 10.dp, vertical = 3.dp)
+    ) {
+        Text(
+            text = texto,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = ViajesColores.VerdeTexto
+        )
+    }
+}
+
+@Composable
 fun GrupoActivoCard(
     grupo: GrupoViaje,
     usuario: Usuario,
@@ -206,6 +223,7 @@ private fun ChatMensajes(
 ) {
     val estado = rememberLazyListState()
 
+    // Baja al último mensaje cada vez que llega uno nuevo
     LaunchedEffect(mensajes.size) {
         if (mensajes.isNotEmpty()) estado.animateScrollToItem(mensajes.lastIndex)
     }
