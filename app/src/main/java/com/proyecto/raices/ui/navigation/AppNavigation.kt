@@ -20,13 +20,13 @@ import com.proyecto.raices.ui.screens.RegistroAnfitrion
 import com.proyecto.raices.ui.screens.RegistroExplorador
 import com.proyecto.raices.ui.screens.SplashScreen
 import com.proyecto.raices.viewmodel.ServicioViewModel
+import com.proyecto.raices.viewmodel.ViajesViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 
 @Composable
 fun AppNavigation(){
     val navController= rememberNavController()
     val viewmodel: viewmodelUsuarios= viewModel()
-
     val context = LocalContext.current
     val servicioVM: ServicioViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -37,6 +37,17 @@ fun AppNavigation(){
             }
         }
     )
+
+    val viajesVM: ViajesViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ViajesViewModel(
+                    context.applicationContext as Application
+                ) as T
+            }
+        }
+    )
+
 
     NavHost(
         navController=navController,
@@ -64,7 +75,7 @@ fun AppNavigation(){
             PantallaExplorar(navController, servicioVM, viewmodel)
         }
         composable("viajes"){
-            PantallaMisViajes(navController, servicioVM, viewmodel)
+            PantallaMisViajes(navController, viajesVM, viewmodel)
         }
         composable("mis-servicios"){
             PantallaMisServicios(navController, servicioVM, viewmodel)
