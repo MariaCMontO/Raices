@@ -1,14 +1,11 @@
 package com.proyecto.raices.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,32 +18,40 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.CategoriaServicio
 import com.proyecto.raices.data.model.ServicioEntity
+import com.proyecto.raices.ui.screens.PantallaGestionServicio
+import com.proyecto.raices.viewmodel.ServicioViewModel
 
 @Composable
 fun ItemServicio(
+    servicioVM: ServicioViewModel,
     servicio: ServicioEntity,
-    onClick: () -> Unit,
     tipoUsuario: String,
-    generoUsuario: String
+    generoUsuario: String,
+    correoUsuario: String
 ) {
     val fotoAnfi = if (generoUsuario == "F") R.drawable.mujer_user else R.drawable.hombre_user
+    var mostrarGestion by remember { mutableStateOf(false) }
+    val servicioVM = servicioVM
 
     val categoria = servicio.categoria
+
     val imagen = when (categoria) {
         CategoriaServicio.HISTORIA -> {
             R.drawable.historia
@@ -165,7 +170,13 @@ fun ItemServicio(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Button(
-                    onClick = { onClick() },
+                    onClick = {
+                        if (tipoUsuario == "EXPLORADOR") {
+
+                        } else {
+                            mostrarGestion = true;
+                        }
+                    },
                     modifier = Modifier
                         .width(110.dp)
                         .height(40.dp),
@@ -174,9 +185,23 @@ fun ItemServicio(
                         contentColor = Color.White
                     )
                 ) {
-                    val texto = if (tipoUsuario == "EXPLORADOR") "Reservar" else "Ver"
+                    val texto = if (tipoUsuario == "EXPLORADOR") "Reservar" else "Editar"
                     Text(texto)
                 }
+            }
+
+            if (mostrarGestion) {
+                PantallaGestionServicio(
+                    servicioVM = servicioVM,
+                    servicio = servicio,
+                    onCancelar = { mostrarGestion = false },
+                    onActualizar = { servicioActualizado ->
+                        servicioVM.actualizar(servicioActualizado)
+
+                        mostrarGestion = false
+                    },
+                    onTransformarCategoria = { servicioVM.transformarACategoriaEnum(it)!! }
+                )
             }
         }
     }

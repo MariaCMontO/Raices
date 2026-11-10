@@ -21,7 +21,6 @@ fun PantallaMisViajes(
     servicioVM: ServicioViewModel,
     usuarioVM: viewmodelUsuarios
 ) {
-    val lista by servicioVM.listaServicios.collectAsState(initial = emptyList())
 
     val usuario = usuarioVM.usuarioActivo ?: return
     val tipoUsuario = usuario.tipoUsuario
