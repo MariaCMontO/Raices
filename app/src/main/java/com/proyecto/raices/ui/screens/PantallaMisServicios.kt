@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.proyecto.raices.ui.components.BarrasSuperiorInferior
 import com.proyecto.raices.ui.components.ItemServicio
@@ -51,7 +52,7 @@ fun PantallaMisServicios(
     val correoUsuario = usuario.correo
     val genero = usuario.genero
 
-    val listaServicios = servicioVM.listaServiciosPorCorreoAnfitrion
+    val listaServicios by servicioVM.listaServiciosPorCorreoAnfitrion.collectAsStateWithLifecycle();
 
     LaunchedEffect(correoUsuario, tipoUsuario) {
         servicioVM.obtenerTodosPorCorreoAnfitrion(correoUsuario, tipoUsuario)
@@ -75,12 +76,11 @@ fun PantallaMisServicios(
 
                 items(listaServicios, key = { it.id }) { servicio ->
                     ItemServicio(
+                        servicioVM = servicioVM,
                         servicio = servicio,
-                        onClick = {
-                            //navController.navigate("detalle/${servicio.id}")
-                        },
                         tipoUsuario = tipoUsuario,
-                        generoUsuario = genero
+                        generoUsuario = genero,
+                        correoUsuario = correoUsuario
                     )
                 }
             }
