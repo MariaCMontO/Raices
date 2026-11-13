@@ -16,6 +16,7 @@ import com.proyecto.raices.ui.screens.PerfilAnfitrion
 import com.proyecto.raices.ui.screens.PerfilExplorador
 import com.proyecto.raices.ui.screens.PantallaAñadirServicio
 import com.proyecto.raices.ui.screens.PantallaExplorar
+import com.proyecto.raices.ui.screens.PantallaGestionServicio
 import com.proyecto.raices.ui.screens.PantallaMisServicios
 import com.proyecto.raices.ui.screens.PantallaMisViajes
 import com.proyecto.raices.ui.screens.PantallaReserva

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.proyecto.raices.ui.components.ItemServicio
 import com.proyecto.raices.ui.components.BarrasSuperiorInferior
@@ -45,9 +46,11 @@ fun PantallaExplorar(
     var categoria by remember { mutableStateOf("") }
     val usuario = usuarioVM.usuarioActivo ?: return
     val tipoUsuario = usuario.tipoUsuario
+    val correoUsuario = usuario.correo
     val genero = usuario.genero
 
     val listaServicios = servicioVM.listaServiciosFiltrada
+    //val listaServicios by servicioVM.listaServicios.collectAsStateWithLifecycle()
     val categoriasStr = servicioVM.categoriasStr
 
     LaunchedEffect(query, categoria) {
@@ -123,6 +126,7 @@ fun PantallaExplorar(
 
                 items(listaServicios, key = { it.id }) { servicio ->
                     ItemServicio(
+                        servicioVM = servicioVM,
                         servicio = servicio,
                         onClick = {
                             if (tipoUsuario == "EXPLORADOR") {
@@ -130,7 +134,8 @@ fun PantallaExplorar(
                             }
                         },
                         tipoUsuario = tipoUsuario,
-                        generoUsuario = genero
+                        generoUsuario = genero,
+                        correoUsuario = correoUsuario
                     )
                 }
             }

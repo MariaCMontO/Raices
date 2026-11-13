@@ -10,14 +10,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.MenuBook
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -35,8 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,6 +39,8 @@ import androidx.navigation.NavController
 import com.proyecto.raices.R
 import com.proyecto.raices.data.model.Usuario
 import com.proyecto.raices.ui.components.BarrasSuperiorInferior
+import com.proyecto.raices.ui.components.DialogoCuenta
+import com.proyecto.raices.ui.components.OpcionPerfil
 import com.proyecto.raices.ui.components.chips
 import com.proyecto.raices.ui.components.chipsUnico
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
@@ -52,9 +48,9 @@ import com.proyecto.raices.viewmodel.viewmodelUsuarios
 // ---------- Paleta de colores ----------
 private val FondoPantalla = Color(0xFFf3f3f0)
 private val FondoCard = Color(0xFFF3EBDD)
+private val FondoLista = Color(0xFFF8F1E4)
 private val Marron = Color(0xFF823B18)
 private val VerdeOliva = Color(0xFF4F6B2F)
-private val VerdeIndicador = Color(0xFFCDEB9B)
 private val TextoOscuro = Color(0xFF2B2118)
 private val ChipFondo = Color(0xFFE6DCCB)
 
@@ -65,6 +61,8 @@ fun PerfilAnfitrion(
 ) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
+    var mostrarLenguas by remember { mutableStateOf(false) }
+    var mostrarCuenta by remember { mutableStateOf(false) }
 
     // Si no hay sesión (p. ej. tras cerrarSesion) no se dibuja nada
     val usuario = viewmodel.usuarioActivo ?: return
@@ -76,7 +74,7 @@ fun PerfilAnfitrion(
     val viajeros = 0
     val talleres = 0
     val lenguas = usuario.lenguas
-    val sobreMi = usuario.sobreMi
+    val sobreMi = usuario.sobreMi.ifBlank { "Aún no has escrito tu historia" }
     val foto = if (usuario.genero == "F") R.drawable.mujer_user else R.drawable.hombre_user
 
     BarrasSuperiorInferior(
@@ -296,6 +294,25 @@ fun PerfilAnfitrion(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // ---------- Opciones ----------
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = FondoLista)
+            ) {
+                Column {
+                    OpcionPerfil(Icons.Outlined.Translate, "Lenguas de enseñanza") {
+                        mostrarLenguas = true
+                    }
+                    HorizontalDivider(color = Color(0xFFEFE5D2))
+                    OpcionPerfil(Icons.Outlined.Shield, "Cuenta y privacidad") {
+                        mostrarCuenta = true
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // ---------- Botón cerrar sesión ----------
             Button(
                 modifier = Modifier
@@ -325,6 +342,32 @@ fun PerfilAnfitrion(
             }
         )
     }
+
+    if (mostrarLenguas) {
+        DialogoLenguas(
+            usuario = usuario,
+            onCancelar = { mostrarLenguas = false },
+            onGuardar = { actualizado ->
+                viewmodel.actualizarPersona(actualizado)
+                mostrarLenguas = false
+            }
+        )
+    }
+
+    if (mostrarCuenta) {
+        DialogoCuenta(
+            usuario = usuario,
+            onCancelar = { mostrarCuenta = false },
+            onCambiarContraseña = { actualizado ->
+                viewmodel.actualizarPersona(actualizado)
+                mostrarCuenta = false
+            },
+            onEliminarCuenta = {
+                navController.navigate("iniciosesion") { popUpTo(0) }
+                viewmodel.eliminarUsuario(usuario)
+            }
+        )
+    }
 }
 
 @Composable
@@ -335,13 +378,10 @@ private fun DialogoEditarAnfitrion(
 ) {
     var nombre by remember { mutableStateOf(usuario.nombre) }
     var telefono by remember { mutableStateOf(usuario.telefono) }
-    var contraseña by remember { mutableStateOf(usuario.contraseña) }
     var direccion by remember { mutableStateOf(usuario.direccion) }
     var sobreMi by remember { mutableStateOf(usuario.sobreMi) }
     var genero by remember { mutableStateOf(usuario.genero) }
-    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
     var oficio by remember { mutableStateOf(usuario.oficio ?: "") }
-    var contraseñaVisible by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf("") }
 
     val coloresCampo = OutlinedTextFieldDefaults.colors(
@@ -381,28 +421,6 @@ private fun DialogoEditarAnfitrion(
                     onValueChange = { },
                     enabled = false,
                     modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(text = "Contraseña", fontSize = 16.sp)
-                OutlinedTextField(
-                    value = contraseña,
-                    onValueChange = { contraseña = it },
-                    label = { Text("Crea una contraseña", fontSize = 14.sp) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = coloresCampo,
-                    visualTransformation = if (contraseñaVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val image = if (contraseñaVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                        val description = if (contraseñaVisible) "Ocultar contraseña" else "Mostrar contraseña"
-                        IconButton(onClick = { contraseñaVisible = !contraseñaVisible }) {
-                            Icon(imageVector = image, contentDescription = description)
-                        }
-                    }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -451,15 +469,6 @@ private fun DialogoEditarAnfitrion(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(text = "Lenguas", fontSize = 16.sp)
-                chips(
-                    value = lenguas,
-                    onValueChange = { lenguas = it },
-                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
                 Text(text = "Oficio", fontSize = 16.sp)
                 OutlinedTextField(
                     value = oficio,
@@ -480,9 +489,8 @@ private fun DialogoEditarAnfitrion(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Marron),
                 onClick = {
-                    if (nombre.isBlank() || telefono.isBlank() || contraseña.isBlank() ||
-                        direccion.isBlank() || oficio.isBlank() || sobreMi.isBlank() ||
-                        genero.isBlank() || lenguas.isEmpty()
+                    if (nombre.isBlank() || telefono.isBlank() || direccion.isBlank() ||
+                        oficio.isBlank() || sobreMi.isBlank() || genero.isBlank()
                     ) {
                         error = "Debe llenar todos los campos"
                     } else {
@@ -490,12 +498,10 @@ private fun DialogoEditarAnfitrion(
                             usuario.copy(
                                 nombre = nombre.trim(),
                                 telefono = telefono.trim(),
-                                contraseña = contraseña,
                                 direccion = direccion.trim(),
                                 oficio = oficio.trim(),
                                 sobreMi = sobreMi.trim(),
-                                genero = genero,
-                                lenguas = lenguas.toMutableList()
+                                genero = genero
                             )
                         )
                     }
@@ -508,6 +514,59 @@ private fun DialogoEditarAnfitrion(
             TextButton(onClick = onCancelar) {
                 Text("Cancelar", color = Marron)
             }
+        }
+    )
+}
+
+@Composable
+private fun DialogoLenguas(
+    usuario: Usuario,
+    onCancelar: () -> Unit,
+    onGuardar: (Usuario) -> Unit
+) {
+    var lenguas by remember { mutableStateOf<List<String>>(usuario.lenguas.toList()) }
+    var error by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onCancelar,
+        containerColor = FondoPantalla,
+        title = {
+            Text(
+                text = "Lenguas de enseñanza",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                color = TextoOscuro
+            )
+        },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(text = "Lenguas", fontSize = 16.sp)
+                chips(
+                    value = lenguas,
+                    onValueChange = { lenguas = it },
+                    opciones = listOf("Español", "Ingles", "Frances", "Italiano")
+                )
+
+                if (error.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = error, color = Color.Red, fontSize = 13.sp)
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Marron),
+                onClick = {
+                    if (lenguas.isEmpty()) {
+                        error = "Selecciona al menos una lengua"
+                    } else {
+                        onGuardar(usuario.copy(lenguas = lenguas.toMutableList()))
+                    }
+                }
+            ) { Text("Guardar") }
+        },
+        dismissButton = {
+            TextButton(onClick = onCancelar) { Text("Cancelar", color = Marron) }
         }
     )
 }

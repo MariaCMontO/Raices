@@ -47,6 +47,7 @@ fun PantallaMisViajes(
     reservaVM: ReservaViewModel,
     usuarioVM: viewmodelUsuarios
 ) {
+
     val usuario = usuarioVM.usuarioActivo ?: return
 
     val flujoMisGrupos = remember(usuario.correo) { viajesVM.misGrupos(usuario.correo) }
