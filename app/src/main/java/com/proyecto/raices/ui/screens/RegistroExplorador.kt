@@ -233,7 +233,7 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                             ),
                             onClick = {
                                 if (nombre.isBlank() || telefono.isBlank() || correo.isBlank() ||
-                                    contraseña.isBlank() || direccion.isBlank() || intereses.isEmpty()
+                                    contraseña.isBlank() || direccion.isBlank() || intereses.isEmpty() || genero.isEmpty() || lenguas.isEmpty()
                                 ) {
                                     mensaje = "Debe llenar todos los campos"
                                 } else {
@@ -247,7 +247,7 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                                         oficio="",
                                         tipoUsuario = "EXPLORADOR",
                                         sobreMi=sobreMi,
-                                        lenguas=lenguas .toMutableList(),
+                                        lenguas=lenguas .toList(),
                                         genero=genero
                                     )
                                     viewmodel.agregarUsuario(nuevoUsuario)

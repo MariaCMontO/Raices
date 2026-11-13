@@ -242,7 +242,7 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
                             ),
                             onClick = {
                                 if (nombre.isBlank() || telefono.isBlank() || correo.isBlank() ||
-                                    contraseña.isBlank() || direccion.isBlank() || oficio.isBlank()
+                                    contraseña.isBlank() || direccion.isBlank() || oficio.isBlank() || genero.isEmpty() || lenguas.isEmpty()
                                 ) {
                                     mensaje = "Debe llenar todos los campos"
                                 } else {

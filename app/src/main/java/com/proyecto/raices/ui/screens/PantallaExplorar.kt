@@ -67,7 +67,7 @@ fun PantallaExplorar(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-            .background(Color(0xFFf3f3f0)),
+                .background(Color(0xFFf3f3f0)),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SearchBar(
@@ -128,6 +128,11 @@ fun PantallaExplorar(
                     ItemServicio(
                         servicioVM = servicioVM,
                         servicio = servicio,
+                        onClick = {
+                            if (tipoUsuario == "EXPLORADOR") {
+                                navController.navigate("reservar/${servicio.id}")
+                            }
+                        },
                         tipoUsuario = tipoUsuario,
                         generoUsuario = genero,
                         correoUsuario = correoUsuario
