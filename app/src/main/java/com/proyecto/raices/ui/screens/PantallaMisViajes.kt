@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +37,9 @@ import com.proyecto.raices.ui.components.ViajesColores
 import com.proyecto.raices.viewmodel.ReservaViewModel
 import com.proyecto.raices.viewmodel.ViajesViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,13 +52,24 @@ fun PantallaMisViajes(
 
     val usuario = usuarioVM.usuarioActivo ?: return
 
-    val flujoMisGrupos = remember(usuario.correo) { viajesVM.misGrupos(usuario.correo) }
-    val flujoOtros = remember(usuario.correo) { viajesVM.otrosGrupos(usuario.correo) }
-    val misGrupos by flujoMisGrupos.collectAsState(initial = emptyList())
-    val otrosGrupos by flujoOtros.collectAsState(initial = emptyList())
+    val misGrupos by viajesVM.misGrupos.collectAsStateWithLifecycle()
+    val otrosGrupos by viajesVM.otrosGrupos.collectAsStateWithLifecycle()
 
-    val flujoReservas = remember(usuario.correo) { reservaVM.misReservas(usuario.correo) }
-    val reservas by flujoReservas.collectAsState(initial = emptyList())
+    // Actualiza los grupos cada 5 s mientras la pantalla está abierta
+    LaunchedEffect(usuario.correo) {
+        while (true) {
+            viajesVM.cargarGrupos(usuario.correo)
+            delay(5_000)
+        }
+    }
+
+    // Observar reservas
+    val reservas by reservaVM.reservas.collectAsStateWithLifecycle()
+
+    // Consultar reservas cuando se abre la pantalla
+    LaunchedEffect(usuario.correo) {
+        reservaVM.misReservas(usuario.correo)
+    }
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 

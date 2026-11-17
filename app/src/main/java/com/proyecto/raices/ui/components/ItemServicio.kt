@@ -43,6 +43,7 @@ fun ItemServicio(
     servicioVM: ServicioViewModel,
     servicio: ServicioEntity,
     tipoUsuario: String,
+    onClick: (() -> Unit)? = null,
     generoUsuario: String,
     correoUsuario: String
 ) {
