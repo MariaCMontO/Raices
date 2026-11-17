@@ -56,6 +56,7 @@ import com.proyecto.raices.data.model.GrupoViaje
 import com.proyecto.raices.data.model.MensajeGrupo
 import com.proyecto.raices.data.model.Usuario
 import com.proyecto.raices.viewmodel.ViajesViewModel
+import kotlinx.coroutines.delay
 
 object ViajesColores {
     val Fondo = Color(0xFFf3f3f0)
@@ -112,8 +113,17 @@ fun GrupoActivoCard(
     usuario: Usuario,
     viajesVM: ViajesViewModel
 ) {
-    val flujoMensajes = remember(grupo.id) { viajesVM.mensajes(grupo.id) }
-    val mensajes by flujoMensajes.collectAsState(initial = emptyList())
+
+    val mapaMensajes by viajesVM.mensajesPorGrupo.collectAsState()
+    val mensajes = mapaMensajes[grupo.id].orEmpty()
+
+    // Actualiza el chat cada 3 s mientras la tarjeta está visible
+    LaunchedEffect(grupo.id) {
+        while (true) {
+            viajesVM.cargarMensajes(grupo.id)
+            delay(3_000)
+        }
+    }
 
     var menuAbierto by remember { mutableStateOf(false) }
     var texto by remember { mutableStateOf("") }
