@@ -1,16 +1,24 @@
 package com.proyecto.raices.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -52,7 +60,6 @@ fun PantallaGestionServicio(
 
     var error by remember { mutableStateOf("") }
 
-
     val coloresCampo = OutlinedTextFieldDefaults.colors(
         unfocusedBorderColor = Color(0xFF87736B),
         unfocusedContainerColor = Color.White
@@ -73,7 +80,7 @@ fun PantallaGestionServicio(
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2B2118)
-            )
+            );
         },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -138,8 +145,10 @@ fun PantallaGestionServicio(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF823B18)),
                 onClick = {
+                    val precioNumerico = precio.trim().toDoubleOrNull()
+
                     if (nombre.isBlank() || descripcion.isBlank() ||
-                        precio.isBlank() || categoria.isBlank()
+                        precio == null || categoria.isBlank()
                     ) {
                         error = "Debe llenar todos los campos"
 
