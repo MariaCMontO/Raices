@@ -73,6 +73,11 @@ interface ApiService {
         @Body servicios: List<ServicioEntity>
     ): Map<String, String>
 
+    @FormUrlEncoded
+    @POST("servicios-eliminar.php")
+    suspend fun eliminarPorId(
+        @Field("id") id: Int
+    ): Map<String, String>
 
     @FormUrlEncoded
     @POST("reservas-insertar.php")

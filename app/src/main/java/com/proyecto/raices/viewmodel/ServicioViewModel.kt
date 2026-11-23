@@ -1,6 +1,7 @@
 package com.proyecto.raices.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -173,21 +174,24 @@ class ServicioViewModel(application: Application) : AndroidViewModel(application
         return CategoriaServicio.entries.find { it.tipo == categoriaStr }
     }
 
-    fun registrar(servicio: ServicioEntity){
-        viewModelScope.launch{
-            //dao.insertar(servicio)
-
+    fun registrar(nuevoServicio: ServicioEntity) {
+        viewModelScope.launch {
             try {
-                mensaje.value = RetrofitClient.api.registrarServicios(
-                    servicio.nombre,
-                    servicio.descripcion,
-                    servicio.categoria,
-                    servicio.nombreAnfitrion,
-                    servicio.correoAnfitrion,
-                    servicio.precio,
-                )["mensaje"].toString()
+                val respuesta = RetrofitClient.api.registrarServicios(
+                    nuevoServicio.nombre,
+                    nuevoServicio.descripcion,
+                    nuevoServicio.categoria,
+                    nuevoServicio.nombreAnfitrion,
+                    nuevoServicio.correoAnfitrion,
+                    nuevoServicio.precio,
+                )
+                mensaje.value = respuesta["mensaje"].toString()
 
-            } catch (e: Exception){
+                if (respuesta["mensaje"] == "OK") {
+                    _listaServiciosPorCorreoAnfitrion.value = RetrofitClient.api.obtenerTodosPorCorreoAnfi(nuevoServicio.correoAnfitrion);
+                }
+            } catch (e: Exception) {
+                Log.e("Raices", "Error al registrar", e)
                 mensaje.value = "Error de conexión al registrar"
             }
         }
@@ -215,9 +219,20 @@ class ServicioViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun eliminar(servicio: ServicioEntity) {
+    fun eliminar(id: Int) {
         viewModelScope.launch {
             //dao.eliminar(servicio)
+
+            try {
+                mensaje.value = RetrofitClient.api.eliminarPorId(id)["mensaje"].toString();
+
+                _listaServiciosPorCorreoAnfitrion.update { listaActual ->
+                    listaActual.filterNot { it.id == id }
+                }
+
+            } catch (e: Exception) {
+                mensaje.value = "Error al eliminar"
+            }
         }
     }
 

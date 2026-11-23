@@ -3,7 +3,7 @@ package com.proyecto.raices.network
 object RetrofitClient {
 
 
-    private const val BASE_URL = "http://192.168.1.11/servicios/"
+    private const val BASE_URL = "http://172.26.224.1:8000/"
 
     val api:ApiService by lazy{
         retrofit2.Retrofit.Builder()

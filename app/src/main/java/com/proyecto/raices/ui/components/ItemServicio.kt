@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,10 +47,12 @@ fun ItemServicio(
     tipoUsuario: String,
     onClick: (() -> Unit)? = null,
     generoUsuario: String,
-    correoUsuario: String
-) {
+    correoUsuario: String,
+    onDelete: (Int) -> Unit,
+    ) {
     val fotoAnfi = if (generoUsuario == "F") R.drawable.mujer_user else R.drawable.hombre_user
     var mostrarGestion by remember { mutableStateOf(false) }
+    var mostrarConfirmacionEliminar by remember { mutableStateOf(false) }
     val servicioVM = servicioVM
 
     val categoria = servicio.categoria
@@ -170,24 +174,44 @@ fun ItemServicio(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
 
-                Button(
-                    onClick = {
-                        if (tipoUsuario == "EXPLORADOR") {
+                Column() {
+                    Button(
+                        onClick = {
+                            if (tipoUsuario == "EXPLORADOR") {
 
-                        } else {
-                            mostrarGestion = true;
+                            } else {
+                                mostrarGestion = true;
+                            }
+                        },
+                        modifier = Modifier
+                            .width(110.dp)
+                            .height(40.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = Color(0xFFA0522D),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        val texto = if (tipoUsuario == "EXPLORADOR") "Reservar" else "Editar"
+                        Text(texto)
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    if (tipoUsuario != "EXPLORADOR") {
+                        Button(
+                            onClick = {
+                                mostrarConfirmacionEliminar = true;
+                            },
+                            modifier = Modifier
+                                .width(110.dp)
+                                .height(40.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color(0xFFE91E1E),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text("Eliminar")
                         }
-                    },
-                    modifier = Modifier
-                        .width(110.dp)
-                        .height(40.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color(0xFFA0522D),
-                        contentColor = Color.White
-                    )
-                ) {
-                    val texto = if (tipoUsuario == "EXPLORADOR") "Reservar" else "Editar"
-                    Text(texto)
+                    }
                 }
             }
 
@@ -202,6 +226,30 @@ fun ItemServicio(
                         mostrarGestion = false
                     },
                     onTransformarCategoria = { servicioVM.transformarACategoriaEnum(it)!! }
+                )
+            }
+
+            if (mostrarConfirmacionEliminar) {
+                AlertDialog(
+                    onDismissRequest = { mostrarConfirmacionEliminar = false },
+                    title = { Text("¿Eliminar servicio?") },
+                    text = { Text("Esta acción no se puede deshacer. Se eliminará \"${servicio.nombre}\".") },
+                    confirmButton = {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB3261E)),
+                            onClick = {
+                                mostrarConfirmacionEliminar = false
+                                onDelete(servicio.id)
+                            }
+                        ) {
+                            Text("Sí, eliminar")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { mostrarConfirmacionEliminar = false }) {
+                            Text("No, volver")
+                        }
+                    }
                 )
             }
         }
