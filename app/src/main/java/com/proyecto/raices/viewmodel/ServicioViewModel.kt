@@ -239,7 +239,12 @@ class ServicioViewModel(application: Application) : AndroidViewModel(application
     fun obtenerPorId(id: Int) {
         viewModelScope.launch {
             //servicioSeleccionado = dao.obtenerPorId(id)
-            RetrofitClient.api.obtenerPorId(id);
+            try {
+                servicioSeleccionado = RetrofitClient.api.obtenerPorId(id);
+
+            } catch (e: Exception) {
+                mensaje.value = "Error al eliminar"
+            }
         }
     }
 

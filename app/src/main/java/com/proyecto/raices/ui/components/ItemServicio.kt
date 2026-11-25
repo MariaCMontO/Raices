@@ -178,7 +178,7 @@ fun ItemServicio(
                     Button(
                         onClick = {
                             if (tipoUsuario == "EXPLORADOR") {
-
+                                onClick?.invoke()
                             } else {
                                 mostrarGestion = true;
                             }
@@ -186,7 +186,7 @@ fun ItemServicio(
                         modifier = Modifier
                             .width(110.dp)
                             .height(40.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFA0522D),
                             contentColor = Color.White
                         )

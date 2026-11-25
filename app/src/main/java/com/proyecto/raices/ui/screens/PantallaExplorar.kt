@@ -136,8 +136,7 @@ fun PantallaExplorar(
                         tipoUsuario = tipoUsuario,
                         generoUsuario = genero,
                         correoUsuario = correoUsuario,
-                        onDelete = { id ->
-                                servicioVM.eliminar(id);
+                        onDelete = {
                         }
                     )
                 }

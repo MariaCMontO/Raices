@@ -38,6 +38,7 @@ import com.proyecto.raices.viewmodel.ReservaViewModel
 import com.proyecto.raices.viewmodel.ViajesViewModel
 import com.proyecto.raices.viewmodel.viewmodelUsuarios
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 
@@ -52,15 +53,11 @@ fun PantallaMisViajes(
 
     val usuario = usuarioVM.usuarioActivo ?: return
 
-    val misGrupos by viajesVM.misGrupos.collectAsStateWithLifecycle()
-    val otrosGrupos by viajesVM.otrosGrupos.collectAsStateWithLifecycle()
+    val misGrupos by viajesVM.misGrupos.collectAsState()
+    val otrosGrupos by viajesVM.otrosGrupos.collectAsState()
 
-    // Actualiza los grupos cada 5 s mientras la pantalla está abierta
     LaunchedEffect(usuario.correo) {
-        while (true) {
-            viajesVM.cargarGrupos(usuario.correo)
-            delay(5_000)
-        }
+        viajesVM.cargarGrupos(usuario.correo)
     }
 
     // Observar reservas

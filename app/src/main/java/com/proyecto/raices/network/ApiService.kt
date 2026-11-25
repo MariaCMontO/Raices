@@ -6,6 +6,7 @@ import com.proyecto.raices.data.model.GrupoViaje
 import com.proyecto.raices.data.model.MensajeGrupo
 import com.proyecto.raices.data.model.Reserva
 import com.proyecto.raices.data.model.ServicioEntity
+import com.proyecto.raices.data.model.Usuario
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -15,7 +16,7 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("servicios-consultar-por-id.php")
+    @GET("servicios-obtener-por-id.php")
     suspend fun obtenerPorId(
         @Query("id") id: Int
     ): ServicioEntity
@@ -105,17 +106,17 @@ interface ApiService {
         @Field("correoExplorador") correoExplorador: String
     ): Map<String, String>
 
-    @GET("grupos_mis.php")
+    @GET("grupos-mis.php")
     suspend fun obtenerMisGrupos(@Query("correo") correo: String): List<GrupoViaje>
 
-    @GET("grupos_otros.php")
-    suspend fun obtenerOtrosGrupos(@Query("correo") correo: String): List<GrupoViaje>
+    @GET("grupos-otros.php")
+    suspend fun obtenerOtrosGrupos(): List<GrupoViaje>
 
     @GET("mensajes.php")
-    suspend fun obtenerMensajes(@Query("grupo_id") grupoId: Int): List<MensajeGrupo>
+    suspend fun obtenerMensajes(@Query("grupoId") grupoId: Int): List<MensajeGrupo>
 
     @FormUrlEncoded
-    @POST("grupo_crear.php")
+    @POST("grupo-crear.php")
     suspend fun crearGrupo(
         @Field("nombre") nombre: String,
         @Field("descripcion") descripcion: String,
@@ -123,21 +124,21 @@ interface ApiService {
     ): Map<String, String>
 
     @FormUrlEncoded
-    @POST("grupo_unirse.php")
+    @POST("grupo-unirse.php")
     suspend fun unirseGrupo(
         @Field("grupoId") grupoId: Int,
         @Field("correo") correo: String
     ): Map<String, String>
 
     @FormUrlEncoded
-    @POST("grupo_salir.php")
+    @POST("grupo-salir.php")
     suspend fun salirGrupo(
         @Field("grupoId") grupoId: Int,
         @Field("correo") correo: String
     ): Map<String, String>
 
     @FormUrlEncoded
-    @POST("mensaje_enviar.php")
+    @POST("mensaje-enviar.php")
     suspend fun enviarMensaje(
         @Field("grupoId") grupoId: Int,
         @Field("correoAutor") correoAutor: String,
@@ -145,5 +146,21 @@ interface ApiService {
         @Field("generoAutor") generoAutor: String,
         @Field("texto") texto: String
     ): Map<String, String>
+
+//    @FormUrlEncoded
+//    @POST("usuarios-registro.php")
+//    suspend fun registrarUsuario(
+//        @Field("nombre") nombre: String,
+//        @Field("telefono") telefono: String,
+//        @Field("correo") correo: String,
+//        @Field("contrasena") contrasena: String,
+//        @Field("direccion") direccion: String,
+//        @Field("intereses") intereses: List<String>?,
+//        @Field("oficio") oficio: String?,
+//        @Field("tipoUsuario") tipoUsuario: String,
+//        @Field("sobreMi") sobreMi: String?,
+//        @Field("lenguas") lenguas: List<String>?,
+//        @Field("genero") genero: String,
+//    ): Map<String, String>
 
 }

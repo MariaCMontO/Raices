@@ -26,7 +26,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun servicioDao(): ServicioDao
     abstract fun usuariosDao(): UsuariosDao
     abstract fun grupoViajeDao(): GrupoViajeDao
-
     abstract fun reservaDao(): ReservaDao
 
 }
