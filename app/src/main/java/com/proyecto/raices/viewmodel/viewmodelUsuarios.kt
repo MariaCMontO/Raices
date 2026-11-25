@@ -10,6 +10,7 @@ import com.proyecto.raices.data.database.DatabaseProvider
 import com.proyecto.raices.data.model.Usuario
 import com.proyecto.raices.data.sharedPreferences.SharedPreferencesManager
 import kotlinx.coroutines.launch
+import com.proyecto.raices.network.RetrofitClient
 
 class viewmodelUsuarios(application: Application) : AndroidViewModel(application) {
 
@@ -79,6 +80,150 @@ class viewmodelUsuarios(application: Application) : AndroidViewModel(application
                 )
                 usuariosDao.insertarLista(listaUsuarios)
             }
+        }
+    }
+
+    fun registrarAnfitrionRemoto(
+        usuario: Usuario,
+        onResult: (Boolean) -> Unit
+    ) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val respuesta =
+                    RetrofitClient.api.registrarAnfitrion(
+
+                        nombre = usuario.nombre,
+                        telefono = usuario.telefono,
+                        correo = usuario.correo,
+                        contrasena = usuario.contraseña,
+                        direccion = usuario.direccion,
+
+                        oficio =
+                            usuario.oficio ?: "",
+
+                        sobreMi = usuario.sobreMi,
+
+                        lenguas =
+                            usuario.lenguas.joinToString(","),
+
+                        genero = usuario.genero
+
+                    )
+
+                if (respuesta["mensaje"] == "OK") {
+
+                    usuariosDao.insertar(usuario)
+
+                    onResult(true)
+
+                } else {
+
+                    onResult(false)
+
+                }
+
+            } catch (e: Exception) {
+
+                onResult(false)
+
+            }
+
+        }
+
+    }
+    fun registrarExploradorRemoto(
+        usuario: Usuario,
+        onResult: (Boolean) -> Unit
+    ) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val respuesta =
+                    RetrofitClient.api.registrarExplorador(
+
+                        nombre = usuario.nombre,
+                        telefono = usuario.telefono,
+                        correo = usuario.correo,
+                        contrasena = usuario.contraseña,
+                        direccion = usuario.direccion,
+
+                        intereses =
+                            usuario.intereses?.joinToString(",")
+                                ?: "",
+
+                        sobreMi = usuario.sobreMi,
+
+                        lenguas =
+                            usuario.lenguas.joinToString(","),
+
+                        genero = usuario.genero
+
+                    )
+
+                if (respuesta["mensaje"] == "OK") {
+
+                    usuariosDao.insertar(usuario)
+
+                    onResult(true)
+
+                } else {
+
+                    onResult(false)
+
+                }
+
+            } catch (e: Exception) {
+
+                onResult(false)
+
+            }
+
+        }
+
+    }
+
+    fun loginRemoto(
+        correo:String,
+        contrasena:String,
+        rol:String,
+        onResult:(Boolean)->Unit
+    ){
+        viewModelScope.launch {
+
+            try{
+
+                val respuesta =
+                    RetrofitClient.api.login(
+                        correo,
+                        contrasena
+                    )
+
+                if(respuesta["mensaje"] == "OK"){
+
+                    onResult(true)
+
+                }else{
+
+                    onResult(false)
+
+                }
+
+            }catch(e:Exception){
+
+                login(
+                    correo,
+                    contrasena,
+                    rol,
+                    onResult
+                )
+
+            }
+
         }
     }
 

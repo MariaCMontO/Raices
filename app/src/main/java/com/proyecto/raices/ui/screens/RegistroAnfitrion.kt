@@ -259,9 +259,22 @@ fun RegistroAnfitrion(navController: NavController, viewmodel: viewmodelUsuarios
                                         lenguas=lenguas,
                                         genero=genero
                                     )
-                                    viewmodel.agregarUsuario(nuevoUsuario)
-                                    mensaje = "Registro Exitoso"
-                                    navController.navigate("iniciosesion")
+                                    viewmodel.registrarAnfitrionRemoto(
+                                        nuevoUsuario
+                                    ) { exito ->
+
+                                        if (exito) {
+
+                                            mensaje = "Registro Exitoso"
+                                            navController.navigate("iniciosesion")
+
+                                        } else {
+
+                                            mensaje = "Error al registrar usuario"
+
+                                        }
+
+                                    }
                                 }
                             }
                         ) {

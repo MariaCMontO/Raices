@@ -208,7 +208,7 @@ fun InicioSesion(
                                 "Correo o contraseña incorrectos"
                          */
                         if (tipoUsuario.isNotBlank()) {
-                            viewmodel.login(
+                            viewmodel.loginRemoto(
                                 correo,
                                 contraseña,
                                 rol = tipoUsuario

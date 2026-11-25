@@ -250,9 +250,22 @@ fun RegistroExplorador(navController: NavController, viewmodel: viewmodelUsuario
                                         lenguas=lenguas .toList(),
                                         genero=genero
                                     )
-                                    viewmodel.agregarUsuario(nuevoUsuario)
-                                    mensaje = "Registro Exitoso"
-                                    navController.navigate("iniciosesion")
+                                    viewmodel.registrarExploradorRemoto(
+                                        nuevoUsuario
+                                    ) { exito ->
+
+                                        if (exito) {
+
+                                            mensaje = "Registro Exitoso"
+                                            navController.navigate("iniciosesion")
+
+                                        } else {
+
+                                            mensaje = "Error al registrar usuario"
+
+                                        }
+
+                                    }
                                 }
                             }
                         ) {
