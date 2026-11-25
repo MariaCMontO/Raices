@@ -16,11 +16,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class ViajesViewModel(application: Application) : AndroidViewModel(application) {
 
-   // private val dao = DatabaseProvider
-   //     .getDatabase(application)
+    // private val dao = DatabaseProvider
+    //     .getDatabase(application)
     //    .grupoViajeDao()
 
     private val api = RetrofitClient.api
@@ -42,23 +43,22 @@ class ViajesViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cargarGrupos(correo: String) {
         viewModelScope.launch {
-            try {
-                _misGrupos.value = api.obtenerMisGrupos(correo)
-                _otrosGrupos.value = api.obtenerOtrosGrupos(correo)
-            } catch (e: Exception) {
-                Log.w("ViajesViewModel", "No se pudieron cargar los grupos: ${e.message}")
-            }
+            try { _misGrupos.value = api.obtenerMisGrupos(correo) }
+            catch (e: Exception) { Log.w(TAG, "mis grupos: ${e.message}") }
+
+            try { _otrosGrupos.value = api.obtenerOtrosGrupos() }
+            catch (e: Exception) { Log.w(TAG, "otros grupos: ${e.message}") }
         }
     }
 
-    fun cargarMensajes(grupoId: Int) {
-        viewModelScope.launch {
-            try {
-                val lista = api.obtenerMensajes(grupoId)
-                _mensajesPorGrupo.update { it + (grupoId to lista) }
-            } catch (e: Exception) {
-                Log.w("ViajesViewModel", "No se pudieron cargar los mensajes: ${e.message}")
-            }
+    suspend fun cargarMensajes(grupoId: Int) {
+        try {
+            val lista = api.obtenerMensajes(grupoId)
+            _mensajesPorGrupo.update { it + (grupoId to lista) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.w(TAG, "No se pudieron cargar los mensajes: ${e.message}")
         }
     }
 
