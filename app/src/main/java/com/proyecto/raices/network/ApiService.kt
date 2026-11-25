@@ -1,5 +1,7 @@
 package com.proyecto.raices.network
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.proyecto.raices.data.model.CantidadServiciosResponse
 import com.proyecto.raices.data.model.CategoriaServicio
 import com.proyecto.raices.data.model.GrupoViaje
@@ -162,5 +164,76 @@ interface ApiService {
 //        @Field("lenguas") lenguas: List<String>?,
 //        @Field("genero") genero: String,
 //    ): Map<String, String>
+
+    @FormUrlEncoded
+    @POST("usuarios-login.php")
+    suspend fun loginUsuario(
+        @Field("correo") correo: String,
+        @Field("contrasena") contrasena: String
+    ): JsonObject
+
+    @FormUrlEncoded
+    @POST("usuarios-buscar-por-correo.php")
+    suspend fun obtenerUsuarioPorCorreo(
+        @Field("correo") correo: String
+    ): JsonElement?
+
+    @GET("usuarios-obtener-cantidad.php")
+    suspend fun obtenerCantidadUsuarios(): CantidadServiciosResponse
+
+    @FormUrlEncoded
+    @POST("usuarios-registro.php")
+    suspend fun registrarUsuario(
+        @Field("nombre") nombre: String,
+        @Field("telefono") telefono: String,
+        @Field("correo") correo: String,
+        @Field("contrasena") contrasena: String,
+        @Field("direccion") direccion: String,
+        @Field("tipoUsuario") tipoUsuario: String,
+        @Field("oficio") oficio: String,
+        @Field("sobreMi") sobreMi: String,
+        @Field("lenguas") lenguas: String,
+        @Field("genero") genero: String
+    ): Map<String, String>
+
+    @FormUrlEncoded
+    @POST("usuarios-actualizar-anfitrion.php")
+    suspend fun actualizarAnfitrion(
+        @Field("correo") correo: String,
+        @Field("nombre") nombre: String,
+        @Field("telefono") telefono: String,
+        @Field("direccion") direccion: String,
+        @Field("oficio") oficio: String,
+        @Field("sobreMi") sobreMi: String,
+        @Field("lenguas") lenguas: String,
+        @Field("genero") genero: String
+    ): Map<String, String>
+
+    @FormUrlEncoded
+    @POST("usuarios-actualizar-explorador.php")
+    suspend fun actualizarExplorador(
+        @Field("correo") correo: String,
+        @Field("nombre") nombre: String,
+        @Field("telefono") telefono: String,
+        @Field("direccion") direccion: String,
+        @Field("intereses") intereses: String,
+        @Field("sobreMi") sobreMi: String,
+        @Field("lenguas") lenguas: String,
+        @Field("genero") genero: String
+    ): Map<String, String>
+
+    @FormUrlEncoded
+    @POST("usuarios-cambiar-contrasena.php")
+    suspend fun cambiarContrasena(
+        @Field("correo") correo: String,
+        @Field("contrasenaActual") contrasenaActual: String,
+        @Field("contrasenaNueva") contrasenaNueva: String
+    ): Map<String, String>
+
+    @FormUrlEncoded
+    @POST("usuarios-eliminar.php")
+    suspend fun eliminarUsuario(
+        @Field("correo") correo: String
+    ): Map<String, String>
 
 }
